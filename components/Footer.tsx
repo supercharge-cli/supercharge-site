@@ -9,6 +9,7 @@ const columns = [
       { href: '/docs/install', label: 'Install' },
       { href: '/docs/setup', label: 'Provider setup' },
       { href: '/docs/commands', label: 'CLI commands' },
+      { href: '/donate', label: 'Donate' },
     ],
   },
   {

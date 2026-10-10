@@ -421,6 +421,12 @@ export default function HomePage() {
             <Github className="w-5 h-5 group-hover:rotate-12 transition-transform" />
             <span>CLI source</span>
           </a>
+          <Link
+            href="/donate"
+            className="px-8 py-3 rounded-full border border-zinc-700 text-zinc-300 font-semibold hover:border-orange-500/50 hover:text-white transition-colors"
+          >
+            Donate
+          </Link>
         </div>
         <video
           className="relative z-0 mt-16 w-full max-w-5xl overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950"
