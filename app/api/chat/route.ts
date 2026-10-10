@@ -2,6 +2,7 @@ import { restore } from '@orama/plugin-data-persistence';
 import { search } from '@orama/orama';
 import fs from 'fs';
 import path from 'path';
+import { extraKeywords, pullTokens } from '@/lib/docs-keywords.mjs';
 
 // Load the index once into memory
 const INDEX_PATH = path.join(process.cwd(), 'public', 'search-index.json');
@@ -32,7 +33,28 @@ export async function POST(req: Request) {
     let sourcesPayload: { title: string; url: string }[] = [];
 
     if (db) {
-        const searchResult = await search(db, { term: lastMessage, limit: 3 });
+        const hints = [pullTokens(lastMessage), extraKeywords(lastMessage)].filter(Boolean).join(' ');
+        const byWords = await search(db, {
+            term: lastMessage,
+            properties: ['title', 'content'],
+            limit: 4,
+        });
+        const byHints = hints
+            ? await search(db, {
+                term: hints,
+                properties: ['keywords', 'title'],
+                limit: 4,
+                boost: { keywords: 2, title: 1 },
+            })
+            : { hits: [] };
+        const seen = new Set<string>();
+        const hits = [...byHints.hits, ...byWords.hits].filter((hit) => {
+            const key = `${hit.document.url}|${hit.document.title}`;
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return true;
+        }).slice(0, 5);
+        const searchResult = { hits };
         context = searchResult.hits
             .map((h) => `[${h.document.title}]: ${h.document.content}`)
             .join("\n\n");

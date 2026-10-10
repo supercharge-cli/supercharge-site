@@ -2,6 +2,7 @@ import { create, insert } from '@orama/orama';
 import { persist } from '@orama/plugin-data-persistence';
 import fs from 'fs';
 import path from 'path';
+import { extraKeywords, pullTokens } from '../lib/docs-keywords.mjs';
 // NOTE: 'lib/source' uses 'fumadocs-mdx' which is a virtual module in Next.js build.
 // Standard Node scripts can't import it directly without a custom loader.
 // For this POC, we will revert to reading files directly or using a simplified approach
@@ -34,6 +35,7 @@ async function build() {
     schema: {
       title: 'string',
       url: 'string',
+      keywords: 'string',
       content: 'string',
     },
   });
@@ -45,17 +47,25 @@ async function build() {
     const content = fs.readFileSync(file, 'utf-8');
     // Basic Frontmatter parsing (titles)
     const titleMatch = content.match(/^title:\s*(.*)$/m);
-    const title = titleMatch ? titleMatch[1].trim() : path.basename(file, path.extname(file));
+    const title = titleMatch ? titleMatch[1].trim().replace(/^["']|["']$/g, '') : path.basename(file, path.extname(file));
+    const body = content.replace(/^---[\s\S]*?---/, '').trim();
 
-    // Construct URL from path (basic)
     const relativePath = path.relative(CONTENT_DIR, file).replace(/\\/g, '/').replace(/\.mdx?$/, '');
     const url = `/docs/${relativePath === 'index' ? '' : relativePath}`;
+    const sections = body.split(/\n(?=## )/).map((part) => part.trim()).filter(Boolean);
 
-    await insert(db, {
-      title: title,
-      url: url,
-      content: content,
-    });
+    for (const [index, section] of sections.entries()) {
+      const heading = section.match(/^#{1,3}\s+(.+)$/m);
+      const sectionTitle = heading ? `${title}: ${heading[1].trim()}` : title;
+      const keywords = [pullTokens(section), extraKeywords(`${title}\n${section}`)].filter(Boolean).join(' ');
+      await insert(db, {
+        title: sectionTitle,
+        url: url,
+        keywords,
+        content: section,
+      });
+      if (index === 0 && sections.length === 1) break;
+    }
   }
 
   // 3. Save Index to Public Folder (so the browser/API can load it)
