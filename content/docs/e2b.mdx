@@ -1,0 +1,14 @@
+---
+title: E2B
+description: Sandbox template and what an old sandbox keeps
+---
+
+# E2B
+
+Hosted cloud sandboxes do not run `supercharge agent serve`. They run `supercharge agent daemon`.
+
+The published full sandbox alias is `supercharge-full-sandbox`. New sandboxes created after a publish pick up that image. An existing sandbox stays on the image it was created with.
+
+The wake path can install a system bundle (wake server and browser helper) onto an old sandbox. That bundle does not replace the Supercharge CLI or the daemon binary. Those change when the sandbox is created from a newer template.
+
+Workspace files stay on the same sandbox. The agent workspace root in the template is `/home/user/workspace`.

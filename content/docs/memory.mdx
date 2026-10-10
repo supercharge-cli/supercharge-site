@@ -1,0 +1,19 @@
+---
+title: Memory
+description: Curated user and environment notes
+---
+
+# Memory
+
+Curated notes are on by default. They are separate from the experimental memory v2 topic files.
+
+Files live under `$SUPERCHARGE_HOME/memories/`:
+
+- `USER.md` is the person. One user, shared across bots. Cap is 1375 characters.
+- `MEMORY.md` is this bot’s environment. Cap is 2200 characters.
+
+On a normal laptop both files sit in `~/.supercharge/memories/`.
+
+Entries are separated with `§`. The agent can add, replace, and remove in one call. The character cap is checked on the final list. Prompt-injection-like content is rejected.
+
+On an E2B host, the shared profile is `agent-runtime/memories/USER.md`. Each bot keeps `agent-runtime/bots/<id>/memories/MEMORY.md`. A new sandbox does not see notes that exist only on your laptop.

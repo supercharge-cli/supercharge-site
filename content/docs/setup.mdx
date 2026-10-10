@@ -1,0 +1,16 @@
+---
+title: Provider
+description: Bring your own model key in /setup
+---
+
+# Provider
+
+Open `/setup` inside the CLI and enter the base URL and API key for the provider you already pay.
+
+Supercharge does not sign you into a hosted Grok account. Startup does not fetch announcement banners or a default-model campaign from the built-in Grok proxy. `/setup` still uses the URL you type.
+
+## Request size
+
+`max_request_bytes` is the cap for a request to your provider. Set it on a model, or on the provider so models inherit it. When it is unset, chat and responses requests cap at 50 MiB and the Messages API caps at 30 MiB.
+
+The TOML key is `max_request_bytes`.

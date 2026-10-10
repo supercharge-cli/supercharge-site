@@ -1,0 +1,46 @@
+---
+title: Run modes
+description: Terminal, ACP server, and inbox daemon
+---
+
+# Run modes
+
+The same binary starts three different processes.
+
+## Terminal
+
+```bash
+supercharge
+```
+
+Opens the interactive session in the current directory. The agent reads the repo and runs tools from that workspace.
+
+## ACP server
+
+```bash
+supercharge agent serve
+```
+
+Speaks Agent Client Protocol over a WebSocket. The default bind is `127.0.0.1:2419`. Pass the secret with `--secret` or `SUPERCHARGE_AGENT_SECRET`.
+
+Clients use `ws://{bind}/ws?server-key={secret}`. A remote CLI can attach with:
+
+```bash
+supercharge --remote ws://127.0.0.1:2419/ws --secret TOKEN
+```
+
+Session state survives a reconnect. This mode is not the Vectra inbox.
+
+## Inbox daemon
+
+```bash
+supercharge agent daemon --bind 0.0.0.0:6767 --secret TOKEN
+```
+
+Clients talk HTTP and server-sent events to a daemon that already has the files. They do not launch the CLI themselves.
+
+- E2B sandboxes default to `0.0.0.0:8790` (`SUPERAGENT_BIND`).
+- A local app or Docker host defaults to `0.0.0.0:6767`.
+- The secret comes from `--secret`, `SUPERCHARGE_PASSWORD`, or `SUPERAGENT_API_TOKEN`.
+
+If `supercharge-superagent-server` is on `PATH`, the daemon runs that full `/v1/chat` inbox. If it is missing, the daemon falls back to the ACP WebSocket.
