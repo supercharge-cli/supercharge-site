@@ -182,33 +182,33 @@ function InstallCommands() {
   ].sort((a, b) => (a.kind === os ? -1 : b.kind === os ? 1 : 0));
 
   return (
-    <div className="relative z-10 mt-10 w-full max-w-3xl text-left">
-      <p className="mb-3 text-center font-mono text-xs uppercase tracking-wide text-zinc-500">
-        {ready ? (os === 'windows' ? 'Detected Windows' : 'Detected macOS or Linux') : 'Install'}
-      </p>
-      <div className="space-y-3">
-        {cards.map((card, index) => (
-          <div
-            key={card.kind}
-            className={`rounded-2xl border px-4 py-4 ${index === 0 ? 'border-orange-500/50 bg-zinc-950' : 'border-zinc-800 bg-zinc-950/60'}`}
-          >
-            <div className="mb-2 flex items-center justify-between gap-3">
-              <p className="font-mono text-xs text-zinc-400">
-                {index === 0 ? 'Your OS · ' : 'Also · '}
-                {card.label}
-              </p>
-              <button
-                type="button"
-                onClick={() => copy(card.kind)}
-                className="rounded-md border border-zinc-700 px-2.5 py-1 font-mono text-xs text-zinc-200 hover:border-orange-500/60 hover:text-orange-300"
-              >
-                {copied === card.kind ? 'Copied' : 'Copy'}
-              </button>
-            </div>
-            <code className="block break-all font-mono text-sm text-orange-300">{card.command}</code>
-          </div>
-        ))}
+    <div className="relative z-10 mt-8 w-full max-w-3xl overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950 text-left shadow-none">
+      <div className="flex items-center justify-between border-b border-zinc-800 px-4 py-3">
+        <p className="font-mono text-xs text-zinc-400">
+          {ready ? (os === 'windows' ? 'Windows' : 'macOS or Linux') : 'Install'}
+        </p>
+        <p className="font-mono text-[11px] text-zinc-600">superchargeai.in</p>
       </div>
+      {cards.map((card, index) => (
+        <button
+          key={card.kind}
+          type="button"
+          onClick={() => copy(card.kind)}
+          className={`flex w-full items-center gap-4 px-4 py-3 text-left ${index === 0 ? 'bg-orange-500/5 hover:bg-orange-500/10' : 'border-t border-zinc-800 hover:bg-zinc-900'}`}
+        >
+          <div className="min-w-0 flex-1">
+            <p className="mb-1 font-mono text-[11px] uppercase tracking-wide text-zinc-500">
+              {index === 0 ? 'This computer' : 'Other'} · {card.label}
+            </p>
+            <pre className="overflow-x-auto font-mono text-[13px] leading-6 text-orange-200">
+              <code className="whitespace-nowrap">{card.command}</code>
+            </pre>
+          </div>
+          <span className="shrink-0 font-mono text-xs text-zinc-400">
+            {copied === card.kind ? 'Copied' : 'Copy'}
+          </span>
+        </button>
+      ))}
     </div>
   );
 }
@@ -400,12 +400,12 @@ export default function HomePage() {
 
         {/* CTA Buttons with glow effects */}
         <div
-          className="flex flex-col sm:flex-row items-center gap-5 animate-fade-in-up opacity-0"
+          className="mt-8 flex flex-col sm:flex-row items-center gap-4 animate-fade-in-up opacity-0"
           style={{ animationDelay: '0.8s', animationFillMode: 'forwards' }}
         >
           <Link
             href="/docs"
-            className="group relative flex items-center gap-2 px-10 py-4 bg-orange-600 hover:bg-orange-500 text-white rounded-full font-semibold transition-all duration-300 hover:scale-105 animate-glow-pulse overflow-hidden"
+            className="group relative flex items-center gap-2 px-8 py-3 bg-orange-600 hover:bg-orange-500 text-white rounded-full font-semibold transition-colors overflow-hidden"
           >
             <span className="relative z-10">Read the docs</span>
             <ArrowRight className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform" />
@@ -423,7 +423,7 @@ export default function HomePage() {
           </a>
         </div>
         <video
-          className="relative z-10 mt-14 w-full max-w-5xl overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950"
+          className="relative z-0 mt-16 w-full max-w-5xl overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950"
           src="/using-supercharge.mp4"
           autoPlay
           muted
@@ -436,7 +436,7 @@ export default function HomePage() {
       {/* 2. Features Grid */}
       <div
         ref={featuresSection.ref}
-        className="w-full max-w-7xl mx-auto px-4 py-20 border-t border-zinc-900"
+        className="w-full px-6 py-20 border-t border-zinc-900 lg:px-10"
       >
         {/* Section header */}
         <div className={`text-center mb-16 transition-all duration-700 ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
@@ -470,7 +470,7 @@ export default function HomePage() {
       {/* 4. Updates Section */}
       <div
         ref={updatesSection.ref}
-        className={`w-full max-w-7xl mx-auto px-4 py-12 border-t border-zinc-900 transition-all duration-700 ${updatesSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+        className={`w-full px-6 py-12 border-t border-zinc-900 transition-all duration-700 lg:px-10 ${updatesSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
       >
         <div className="group flex flex-col md:flex-row items-center justify-between gap-6 p-8 rounded-2xl bg-zinc-900/30 border border-zinc-800 hover:border-orange-500/30 transition-all duration-300 backdrop-blur-sm">
           <div className="text-center md:text-left">

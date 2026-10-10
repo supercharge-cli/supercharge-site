@@ -36,9 +36,12 @@ const columns = [
 export function Footer() {
   return (
     <footer className="border-t border-zinc-800 bg-zinc-950 text-zinc-400">
-      <div className="mx-auto grid max-w-6xl gap-10 px-6 py-12 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid w-full gap-10 px-6 py-12 sm:grid-cols-2 lg:grid-cols-4 lg:px-10">
         <div>
-          <p className="text-base font-semibold text-white">Supercharge</p>
+          <p className="flex items-center gap-2 text-base font-semibold text-white">
+            <img src="/logo.png" alt="" width={28} height={28} className="h-7 w-7 rounded-md object-cover" />
+            Supercharge
+          </p>
           <p className="mt-3 max-w-xs text-sm leading-6">
             A free Rust coding agent. Connect the model provider you already pay in{' '}
             <span className="font-mono text-zinc-200">/setup</span>.
@@ -73,7 +76,7 @@ export function Footer() {
         ))}
       </div>
       <div className="border-t border-zinc-800">
-        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-6 py-4 text-xs text-zinc-500 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex w-full flex-col gap-2 px-6 py-4 text-xs text-zinc-500 sm:flex-row sm:items-center sm:justify-between lg:px-10">
           <p>© {new Date().getFullYear()} R3AP3R Editz</p>
           <p>superchargeai.in</p>
         </div>

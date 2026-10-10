@@ -4,7 +4,7 @@ import { Footer } from '@/components/Footer';
 
 export default function Layout({ children }: LayoutProps<'/'>) {
   return (
-    <HomeLayout {...baseOptions()}>
+    <HomeLayout {...baseOptions()} className="[--fd-layout-width:100%]">
       {children}
       <Footer />
     </HomeLayout>

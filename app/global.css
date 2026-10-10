@@ -7,6 +7,10 @@ html {
   scroll-behavior: smooth;
 }
 
+#nd-nav {
+  --fd-layout-width: 100%;
+}
+
 /* Performance optimization for animations */
 * {
   -webkit-font-smoothing: antialiased;
