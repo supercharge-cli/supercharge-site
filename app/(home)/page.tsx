@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowRight, Bot, Zap, Code2, Github, Terminal, Cpu, Globe, Package, Sparkles, Rocket, Shield, Clock } from 'lucide-react';
+import { ArrowRight, Bot, Zap, Github, Terminal, Cpu, Globe, Sparkles, Rocket, Shield, Clock } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 // Animated background orbs component - NO random values to avoid hydration mismatch
@@ -108,56 +108,12 @@ function AnimatedCounter({ end, duration = 2000, suffix = '' }: { end: number; d
   return <span ref={ref}>{count}{suffix}</span>;
 }
 
-// Feature card with stagger animation
-function FeatureCard({
-  icon: Icon,
-  iconColor,
-  iconBg,
-  title,
-  description,
-  index
-}: {
-  icon: any;
-  iconColor: string;
-  iconBg: string;
-  title: string;
-  description: React.ReactNode;
-  index: number;
-}) {
-  const { ref, isVisible } = useScrollAnimation();
-
-  return (
-    <div
-      ref={ref}
-      className={`group relative p-6 rounded-2xl bg-zinc-950/80 border border-zinc-900 hover:border-orange-500/50 transition-all duration-500 backdrop-blur-sm overflow-hidden
-        ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-      style={{ transitionDelay: `${index * 100}ms` }}
-    >
-      {/* Glow effect on hover */}
-      <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-      {/* Animated border glow */}
-      <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-        <div className="absolute inset-[-1px] rounded-2xl bg-gradient-to-r from-orange-500/50 via-amber-500/50 to-orange-500/50 blur-sm animate-gradient-rotate" />
-      </div>
-
-      <div className="relative z-10">
-        <div className={`w-14 h-14 rounded-xl ${iconBg} flex items-center justify-center mb-5 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg`}>
-          <Icon className={`w-7 h-7 ${iconColor}`} />
-        </div>
-        <h3 className="text-xl font-semibold text-zinc-100 mb-3 group-hover:text-orange-400 transition-colors">{title}</h3>
-        <p className="text-zinc-400 leading-relaxed">{description}</p>
-      </div>
-    </div>
-  );
-}
-
 // Marquee component for tech stack
 function TechMarquee() {
   const items = [
     { icon: Terminal, text: 'supercharge' },
     { icon: Cpu, text: 'Rust CLI' },
-    { icon: Globe, text: 'E2B sandbox' },
+    { icon: Globe, text: 'ACP server' },
     { icon: Bot, text: 'Docs AI' },
     { icon: Zap, text: 'Inbox daemon' },
     { icon: Shield, text: 'Bring your own key' },
@@ -186,6 +142,90 @@ function TechMarquee() {
   );
 }
 
+const UNIX_INSTALL = 'curl -fsSL https://superchargeai.in/install.sh | bash';
+const WINDOWS_INSTALL = 'irm https://superchargeai.in/install.ps1 | iex';
+
+function InstallCommands() {
+  const [os, setOs] = useState<'unix' | 'windows'>('unix');
+  const [ready, setReady] = useState(false);
+  const [copied, setCopied] = useState<'unix' | 'windows' | null>(null);
+
+  useEffect(() => {
+    const ua = navigator.userAgent || '';
+    const platform = navigator.platform || '';
+    setOs(/Win/i.test(platform) || /Windows/i.test(ua) ? 'windows' : 'unix');
+    setReady(true);
+  }, []);
+
+  async function copy(kind: 'unix' | 'windows') {
+    const text = kind === 'windows' ? WINDOWS_INSTALL : UNIX_INSTALL;
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(kind);
+      window.setTimeout(() => setCopied(null), 1600);
+    } catch {
+      setCopied(null);
+    }
+  }
+
+  const cards = [
+    {
+      kind: 'unix' as const,
+      label: 'macOS and Linux',
+      command: UNIX_INSTALL,
+    },
+    {
+      kind: 'windows' as const,
+      label: 'Windows PowerShell',
+      command: WINDOWS_INSTALL,
+    },
+  ].sort((a, b) => (a.kind === os ? -1 : b.kind === os ? 1 : 0));
+
+  return (
+    <div className="relative z-10 mt-10 w-full max-w-3xl text-left">
+      <p className="mb-3 text-center font-mono text-xs uppercase tracking-wide text-zinc-500">
+        {ready ? (os === 'windows' ? 'Detected Windows' : 'Detected macOS or Linux') : 'Install'}
+      </p>
+      <div className="space-y-3">
+        {cards.map((card, index) => (
+          <div
+            key={card.kind}
+            className={`rounded-2xl border px-4 py-4 ${index === 0 ? 'border-orange-500/50 bg-zinc-950' : 'border-zinc-800 bg-zinc-950/60'}`}
+          >
+            <div className="mb-2 flex items-center justify-between gap-3">
+              <p className="font-mono text-xs text-zinc-400">
+                {index === 0 ? 'Your OS · ' : 'Also · '}
+                {card.label}
+              </p>
+              <button
+                type="button"
+                onClick={() => copy(card.kind)}
+                className="rounded-md border border-zinc-700 px-2.5 py-1 font-mono text-xs text-zinc-200 hover:border-orange-500/60 hover:text-orange-300"
+              >
+                {copied === card.kind ? 'Copied' : 'Copy'}
+              </button>
+            </div>
+            <code className="block break-all font-mono text-sm text-orange-300">{card.command}</code>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const capabilities = [
+  { title: 'Terminal', command: 'supercharge', detail: 'Interactive session in the repo you open. The agent reads files, runs tools, and edits code.', href: '/docs/commands' },
+  { title: 'Fully BYOK', command: '/setup', detail: 'You bring the key and the base URL. Supercharge does not sell a subscription or a credit balance. Switch the format later with /format.', href: '/docs/setup' },
+  { title: 'Three API formats', command: 'chat · messages · responses', detail: 'Chat Completions, Anthropic Messages, and OpenAI Responses. The CLI adds the path from the format you pick.', href: '/docs/setup' },
+  { title: 'ACP server', command: 'supercharge agent serve', detail: 'Agent Client Protocol on 127.0.0.1:2419. Editors reconnect with the same secret.', href: '/docs/modes' },
+  { title: 'Inbox daemon', command: 'supercharge agent daemon', detail: 'HTTP and server-sent events on port 6767. Thin clients never launch the CLI.', href: '/docs/modes' },
+  { title: 'One-shot runs', command: 'supercharge -p "…"', detail: 'A prompt, then exit. JSON output, tool allow lists, and --yolo for unattended runs.', href: '/docs/commands' },
+  { title: 'Sessions', command: '/resume', detail: 'Continue, rewind, compact, copy, and export conversations under ~/.supercharge/sessions.', href: '/docs/sessions' },
+  { title: 'Permissions', command: '/always-approve', detail: 'Ask, auto, or always-approve. --allow and --deny still gate shell and file tools.', href: '/docs/permissions' },
+  { title: 'Memory', command: '/remember', detail: 'Curated USER.md and MEMORY.md notes. Experimental /flush stays off unless you turn it on.', href: '/docs/memory' },
+  { title: 'Extensions', command: '/mcps', detail: 'MCP servers, skills, plugins, and hooks. Project rules live in AGENTS.md.', href: '/docs/extensions' },
+];
+
 export default function HomePage() {
   const { displayText, isComplete } = useTypewriter('Keeps the key.', 70);
   const heroRef = useRef<HTMLDivElement>(null);
@@ -208,7 +248,6 @@ export default function HomePage() {
   }, []);
 
   const featuresSection = useScrollAnimation();
-  const pluginSection = useScrollAnimation();
   const updatesSection = useScrollAnimation();
 
   return (
@@ -354,8 +393,10 @@ export default function HomePage() {
           className="text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto mb-12 leading-relaxed animate-fade-in-up opacity-0"
           style={{ animationDelay: '0.6s', animationFillMode: 'forwards' }}
         >
-          A free Rust coding agent. Install the CLI, connect the model provider you already pay in <span className="font-mono text-zinc-200">/setup</span>, and work in the terminal or over an inbox.
+          A free, fully bring-your-own-key Rust coding agent. In <span className="font-mono text-zinc-200">/setup</span> you choose Chat Completions, Messages, or Responses, then use the terminal, a script, or an inbox.
         </p>
+
+        <InstallCommands />
 
         {/* CTA Buttons with glow effects */}
         <div
@@ -404,76 +445,25 @@ export default function HomePage() {
             Features
           </span>
           <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
-            How you run it
+            What the CLI can do
           </h2>
           <p className="text-zinc-400 max-w-xl mx-auto">
-            One binary. The process you start decides who can see the files.
+            One binary. These are the ways it runs and the controls around it. Docs for CLI 1.3.32.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <FeatureCard
-            index={0}
-            icon={Bot}
-            iconColor="text-orange-500"
-            iconBg="bg-gradient-to-br from-orange-500/20 to-orange-600/10"
-            title="Terminal"
-            description={
-              <>
-                Run <span className="text-orange-400 font-medium font-mono">supercharge</span> in a repo. The agent reads the tree, calls tools, and keeps the session in the terminal.
-              </>
-            }
-          />
-          <FeatureCard
-            index={1}
-            icon={Zap}
-            iconColor="text-amber-400"
-            iconBg="bg-gradient-to-br from-amber-500/20 to-amber-600/10"
-            title="ACP server"
-            description={
-              <>
-                <span className="text-amber-400 font-medium font-mono">supercharge agent serve</span> speaks Agent Client Protocol on 127.0.0.1:2419. Clients reconnect with the same secret.
-              </>
-            }
-          />
-          <FeatureCard
-            index={2}
-            icon={Code2}
-            iconColor="text-orange-400"
-            iconBg="bg-gradient-to-br from-orange-500/20 to-orange-600/10"
-            title="Inbox daemon"
-            description={
-              <>
-                <span className="text-orange-400 font-medium font-mono">supercharge agent daemon</span> exposes HTTP and server-sent events. Thin clients never launch the CLI.
-              </>
-            }
-          />
-        </div>
-      </div>
-
-      {/* 3. Framework Plugins Section - ALL THREE */}
-      <div
-        ref={pluginSection.ref}
-        className={`w-full max-w-7xl mx-auto px-4 py-16 border-t border-zinc-900 transition-all duration-700 ${pluginSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-      >
-        <div className="text-center mb-10">
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-sm font-medium mb-4">
-            <Package className="w-4 h-4" />
-            Install
-          </span>
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-3">
-            One command on this machine
-          </h2>
-          <p className="text-zinc-400 max-w-xl mx-auto">
-            The installer comes from the public releases repo. Source version in this docs set is 1.3.32. A published tag can be older.
-          </p>
-        </div>
-
-        <div className="max-w-3xl mx-auto p-6 rounded-2xl bg-zinc-950 border border-zinc-800">
-          <p className="text-xs font-mono uppercase tracking-wide text-zinc-500 mb-3">Install on this machine</p>
-          <code className="block text-sm md:text-base text-orange-400 font-mono break-all">
-            curl -fsSL https://superchargeai.in/install.sh | bash
-          </code>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {capabilities.map((item) => (
+            <Link
+              key={item.title}
+              href={item.href}
+              className="rounded-2xl border border-zinc-800 bg-zinc-950/80 p-5 hover:border-orange-500/50"
+            >
+              <h3 className="text-lg font-semibold text-zinc-100">{item.title}</h3>
+              <p className="mt-3 overflow-x-auto font-mono text-xs text-orange-300">{item.command}</p>
+              <p className="mt-3 text-sm leading-6 text-zinc-400">{item.detail}</p>
+            </Link>
+          ))}
         </div>
       </div>
 
