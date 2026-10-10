@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { LiveTerminal } from '@/components/LiveTerminal';
 import { ArrowRight, Bot, Zap, Code2, Github, Terminal, Cpu, Globe, Package, Sparkles, Rocket, Shield, Clock } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
@@ -381,6 +382,7 @@ export default function HomePage() {
             <span>CLI source</span>
           </a>
         </div>
+        <LiveTerminal />
       </div>
 
       {/* 2. Features Grid */}

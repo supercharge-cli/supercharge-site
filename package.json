@@ -6,6 +6,7 @@
     "build:index": "node scripts/build-index.mjs",
     "build": "npm run build:index && next build",
     "dev": "next dev",
+    "terminal": "node scripts/terminal-server.mjs",
     "start": "next start",
     "types:check": "fumadocs-mdx && next typegen && tsc --noEmit",
     "postinstall": "fumadocs-mdx",
@@ -16,6 +17,8 @@
     "@langchain/openai": "^1.2.0",
     "@orama/orama": "^3.1.16",
     "@orama/plugin-data-persistence": "^3.1.16",
+    "@xterm/addon-fit": "^0.11.0",
+    "@xterm/xterm": "^6.0.0",
     "clsx": "^2.1.1",
     "fumadocs-core": "16.2.4",
     "fumadocs-mdx": "14.1.0",
@@ -24,11 +27,13 @@
     "lit": "^3.3.1",
     "lucide-react": "^0.556.0",
     "next": "^16.0.10",
+    "node-pty": "^1.1.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
-    "tailwind-merge": "^3.4.0"
+    "tailwind-merge": "^3.4.0",
+    "ws": "^8.22.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.3",
