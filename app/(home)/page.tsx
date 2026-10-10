@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { LiveTerminal } from '@/components/LiveTerminal';
 import { ArrowRight, Bot, Zap, Code2, Github, Terminal, Cpu, Globe, Package, Sparkles, Rocket, Shield, Clock } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
@@ -382,7 +381,15 @@ export default function HomePage() {
             <span>CLI source</span>
           </a>
         </div>
-        <LiveTerminal />
+        <video
+          className="relative z-10 mt-14 w-full max-w-5xl overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950"
+          src="/using-supercharge.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          controls
+        />
       </div>
 
       {/* 2. Features Grid */}
