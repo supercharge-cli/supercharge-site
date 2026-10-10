@@ -4,7 +4,12 @@ import { Footer } from '@/components/Footer';
 
 export default function Layout({ children }: LayoutProps<'/'>) {
   return (
-    <HomeLayout {...baseOptions()} className="[--fd-layout-width:100%]">
+    <HomeLayout
+      {...baseOptions()}
+      searchToggle={{ enabled: false }}
+      themeSwitch={{ enabled: false }}
+      className="[--fd-layout-width:100%]"
+    >
       {children}
       <Footer />
     </HomeLayout>
