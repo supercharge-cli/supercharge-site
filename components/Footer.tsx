@@ -1,39 +1,83 @@
 import Link from 'next/link';
 import { Github } from 'lucide-react';
 
+const columns = [
+  {
+    title: 'Start',
+    links: [
+      { href: '/docs', label: 'Getting started' },
+      { href: '/docs/install', label: 'Install' },
+      { href: '/docs/setup', label: 'Provider setup' },
+      { href: '/docs/commands', label: 'CLI commands' },
+    ],
+  },
+  {
+    title: 'Reference',
+    links: [
+      { href: '/docs/slash', label: 'Slash commands' },
+      { href: '/docs/keys', label: 'Keys' },
+      { href: '/docs/sessions', label: 'Sessions' },
+      { href: '/docs/permissions', label: 'Permissions' },
+      { href: '/docs/config', label: 'Config' },
+      { href: '/docs/memory', label: 'Memory' },
+    ],
+  },
+  {
+    title: 'Run it',
+    links: [
+      { href: '/docs/modes', label: 'ACP and daemon' },
+      { href: '/docs/extensions', label: 'MCP, skills, hooks' },
+      { href: 'https://github.com/iotserver24/supercharge', label: 'Source' },
+      { href: 'https://github.com/iotserver24/supercharge-releases', label: 'Releases' },
+    ],
+  },
+];
+
 export function Footer() {
-    return (
-        <footer className="w-full border-t border-zinc-800 bg-zinc-950 py-10 px-4">
-            <div className="max-w-7xl mx-auto">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
-
-                    {/* Column 1: Brand */}
-                    <div className="col-span-2 md:col-span-1">
-                        <h3 className="text-lg font-bold text-white mb-3">Supercharge</h3>
-                        <p className="text-sm text-zinc-400 leading-relaxed">
-                            Free Rust coding agent. You pay the model provider you connect in /setup.
-                        </p>
-                    </div>
-
-                    {/* Column 2: Documentation */}
-                    <div>
-                        <h4 className="text-sm font-semibold text-zinc-200 mb-3">Documentation</h4>
-                        <ul className="space-y-2 text-sm">
-                            <li><Link href="/docs" className="text-zinc-400 hover:text-orange-400 transition-colors">Getting started</Link></li>
-                            <li><Link href="/docs/install" className="text-zinc-400 hover:text-orange-400 transition-colors">Install</Link></li>
-                            <li><Link href="/docs/modes" className="text-zinc-400 hover:text-orange-400 transition-colors">Run modes</Link></li>
-                            <li><a href="https://github.com/iotserver24/supercharge" className="text-zinc-400 hover:text-orange-400 transition-colors">Source</a></li>
-                        </ul>
-                    </div>
-                </div>
-
-                {/* Bottom Bar */}
-                <div className="pt-6 border-t border-zinc-800 flex flex-col md:flex-row items-center justify-between gap-4">
-                    <p className="text-xs text-zinc-500">
-                        © {new Date().getFullYear()} R3AP3R Editz. CLI source is Apache-2.0 upstream. Site layout from VectraDocs.
-                    </p>
-                </div>
-            </div>
-        </footer>
-    );
+  return (
+    <footer className="border-t border-zinc-800 bg-zinc-950 text-zinc-400">
+      <div className="mx-auto grid max-w-6xl gap-10 px-6 py-12 sm:grid-cols-2 lg:grid-cols-4">
+        <div>
+          <p className="text-base font-semibold text-white">Supercharge</p>
+          <p className="mt-3 max-w-xs text-sm leading-6">
+            A free Rust coding agent. Connect the model provider you already pay in{' '}
+            <span className="font-mono text-zinc-200">/setup</span>.
+          </p>
+          <a
+            href="https://github.com/iotserver24/supercharge"
+            className="mt-5 inline-flex items-center gap-2 text-sm text-zinc-300 hover:text-orange-400"
+          >
+            <Github className="h-4 w-4" />
+            iotserver24/supercharge
+          </a>
+        </div>
+        {columns.map((column) => (
+          <div key={column.title}>
+            <p className="text-sm font-semibold text-zinc-100">{column.title}</p>
+            <ul className="mt-3 space-y-2 text-sm">
+              {column.links.map((link) => (
+                <li key={link.href}>
+                  {link.href.startsWith('http') ? (
+                    <a href={link.href} className="hover:text-orange-400">
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link href={link.href} className="hover:text-orange-400">
+                      {link.label}
+                    </Link>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+      <div className="border-t border-zinc-800">
+        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-6 py-4 text-xs text-zinc-500 sm:flex-row sm:items-center sm:justify-between">
+          <p>© {new Date().getFullYear()} R3AP3R Editz</p>
+          <p>superchargeai.in</p>
+        </div>
+      </div>
+    </footer>
+  );
 }

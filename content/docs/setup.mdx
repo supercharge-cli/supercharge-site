@@ -1,16 +1,111 @@
 ---
-title: Provider
-description: Bring your own model key in /setup
+title: Provider setup
+description: Connect a model API with /setup, formats, images, and headers
 ---
 
-# Provider
+# Provider setup
 
-Open `/setup` inside the CLI and enter the base URL and API key for the provider you already pay.
+Open the terminal UI and run the setup wizard:
 
-Supercharge does not sign you into a hosted Grok account. Startup does not fetch announcement banners or a default-model campaign from the built-in Grok proxy. `/setup` still uses the URL you type.
+```bash
+supercharge
+```
+
+Then type:
+
+```
+/setup
+```
+
+`/login` opens the same wizard. It does not sign you into a hosted Supercharge or Grok account. `/logout` clears session-based auth only. The provider URL and key stay under `/setup`.
+
+## What you enter
+
+1. Pick a listed provider, or choose Custom and type a base URL.
+2. Choose the API format: **Chat Completions**, **Messages**, or **Responses**.
+3. Enter the API key when the provider requires one. A local server can run without a key.
+4. Pick a model from the list the provider returns, or type an id that endpoint accepts.
+
+The base URL should look like `https://api.example.com/v1`. Do not append `/chat/completions`, `/messages`, or `/responses`. The CLI adds that path from the format you chose.
+
+Saved config goes in `~/.supercharge/config.toml` and is reused next launch. A global environment variable is not accepted as the provider API key. Put the key in `/setup`.
+
+## Formats
+
+| `api_backend` | Protocol | Auth the adapter sends |
+| --- | --- | --- |
+| `chat_completions` | OpenAI Chat Completions | Bearer token. This is the default when unset. |
+| `responses` | OpenAI Responses | Bearer token |
+| `messages` | Anthropic Messages | `x-api-key` plus the Anthropic version header |
+
+Change the saved format later without re-entering the key:
+
+```
+/format
+```
+
+If no valid setup exists yet, `/format` tells you to run `/setup` first. The endpoint must actually support the format you pick.
+
+## Switch models later
+
+```
+/model
+/model your-model-id
+/m your-model-id
+/effort high
+```
+
+`/model` with no argument fetches `/models` from the saved base URL and lists chat models. The second argument on a reasoning model is an effort level: `low`, `medium`, `high`, or `xhigh`. `/effort` changes effort on the current model only when that model advertises it.
+
+From the shell, for one run:
+
+```bash
+supercharge -m your-model-id
+supercharge -p "Summarize this repo" -m your-model-id
+supercharge models
+```
+
+`Ctrl+M` in the scrollback opens the model picker. With the prompt focused, `Ctrl+M` toggles multiline input instead.
+
+A persistent default:
+
+```toml
+[models]
+default = "your-model-id"
+```
 
 ## Request size
 
-`max_request_bytes` is the cap for a request to your provider. Set it on a model, or on the provider so models inherit it. When it is unset, chat and responses requests cap at 50 MiB and the Messages API caps at 30 MiB.
+`max_request_bytes` caps one request to your provider. Set it on a model, or on the provider so models inherit it. When it is unset, chat and responses requests cap at 50 MiB and the Messages API caps at 30 MiB. The TOML key is `max_request_bytes`.
 
-The TOML key is `max_request_bytes`.
+## Extra headers and query params
+
+```toml
+[model.my-model]
+model = "model-id"
+base_url = "https://api.example.com/v1"
+name = "Display name"
+api_backend = "chat_completions"
+api_key = "enter-this-through-setup"
+temperature = 0.7
+top_p = 0.95
+max_completion_tokens = 8192
+context_window = 128000
+extra_headers = { "x-api-key" = "sk-..." }
+query_params = { api-version = "2026-07-22" }
+```
+
+`extra_headers` are sent as written on every request to that endpoint. Per-model values win over the same keys under `[models]`.
+
+## Image and video providers
+
+Chat setup does not configure images. Use a separate wizard:
+
+```
+/isetup
+/imodels flux
+/imagine a diagram of the request flow
+/imagine-video a short pan across a desk
+```
+
+Aliases: `/imagine-setup`, `/image-setup`, `/imagine-model`, `/image-model`, `/imodel`. Image settings are `[image_provider]` in `config.toml`. `/imagine` needs `/isetup` first.

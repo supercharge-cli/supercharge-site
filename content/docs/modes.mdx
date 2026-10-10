@@ -1,46 +1,77 @@
 ---
-title: Run modes
-description: Terminal, ACP server, and inbox daemon
+title: ACP and daemon
+description: Headless prompts, agent stdio, agent serve, and the inbox daemon
 ---
 
-# Run modes
+# ACP and daemon
 
-The same binary starts three different processes.
+Three ways to run the same binary when you are not sitting in the terminal UI.
 
-## Terminal
+## One shot
 
 ```bash
-supercharge
+supercharge -p "Add a health check and run the unit tests" --yolo
+supercharge -p "Explain src/lib.rs" --output-format json
 ```
 
-Opens the interactive session in the current directory. The agent reads the repo and runs tools from that workspace.
+The process exits when the reply is done. Stdout is the answer. See [CLI commands](/docs/commands) for formats and tool filters.
 
-## ACP server
+## ACP over stdio
+
+Editors and SDKs speak Agent Client Protocol on stdin and stdout:
+
+```bash
+supercharge agent --always-approve stdio
+supercharge agent --always-approve --model your-model-id stdio
+```
+
+Flags that apply to every agent transport go after `agent` and before the mode name.
+
+| Flag | Meaning |
+| --- | --- |
+| `-m`, `--model` | Model id. |
+| `--always-approve`, `--yolo` | No interactive permission prompts. |
+| `--agent-profile <PATH>` | Profile file. |
+| `--leader` / `--no-leader` | Share a leader process, or force a local agent. |
+
+## ACP WebSocket
 
 ```bash
 supercharge agent serve
+supercharge agent --always-approve serve --bind 127.0.0.1:2419 --secret TOKEN
 ```
 
-Speaks Agent Client Protocol over a WebSocket. The default bind is `127.0.0.1:2419`. Pass the secret with `--secret` or `SUPERCHARGE_AGENT_SECRET`.
+Default bind is `127.0.0.1:2419`. The secret is `--secret` or `SUPERCHARGE_AGENT_SECRET`.
 
-Clients use `ws://{bind}/ws?server-key={secret}`. A remote CLI can attach with:
+Clients connect to:
+
+```text
+ws://127.0.0.1:2419/ws?server-key=TOKEN
+```
+
+A remote CLI:
 
 ```bash
 supercharge --remote ws://127.0.0.1:2419/ws --secret TOKEN
 ```
 
-Session state survives a reconnect. This mode is not the Vectra inbox.
+Session state survives a reconnect. This mode is not the HTTP inbox.
 
 ## Inbox daemon
+
+Clients never launch the CLI. They send HTTP and read server-sent events. The daemon, on the machine that has the files, starts the agent.
 
 ```bash
 supercharge agent daemon --bind 0.0.0.0:6767 --secret TOKEN
 ```
 
-Clients talk HTTP and server-sent events to a daemon that already has the files. They do not launch the CLI themselves.
+| Input | Source |
+| --- | --- |
+| Bind | `--bind` or `SUPERAGENT_BIND`. App and Docker hosts use `0.0.0.0:6767`. |
+| Secret | `--secret`, else `SUPERCHARGE_PASSWORD`, else `SUPERAGENT_API_TOKEN`. |
 
-- E2B sandboxes default to `0.0.0.0:8790` (`SUPERAGENT_BIND`).
-- A local app or Docker host defaults to `0.0.0.0:6767`.
-- The secret comes from `--secret`, `SUPERCHARGE_PASSWORD`, or `SUPERAGENT_API_TOKEN`.
+If `supercharge-superagent-server` is on `PATH`, the daemon runs that process and you get the full `/v1/chat` inbox (events, stop, approve, conversations). If that binary is missing, the daemon falls back to ACP WebSocket `agent serve`.
 
-If `supercharge-superagent-server` is on `PATH`, the daemon runs that full `/v1/chat` inbox. If it is missing, the daemon falls back to the ACP WebSocket.
+`--leader-socket` isolates a local leader. Sockets under `~/.supercharge/leader-*.sock` stay visible to `supercharge leader list` and `supercharge leader kill` when those subcommands are in your build.
+
+Always-approve is the mode for an unattended daemon. Deny rules still apply.

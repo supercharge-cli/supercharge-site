@@ -1,0 +1,86 @@
+---
+title: Slash commands
+description: Every built-in / command in the terminal UI
+---
+
+# Slash commands
+
+Type `/` in the prompt. The menu fuzzy-matches. A skill with `user-invocable: true` shows up here too. If a skill reuses a built-in name, the built-in keeps that name and the skill is `/plugin-name:command`.
+
+## Session
+
+| Command | What it does |
+| --- | --- |
+| `/new`, `/clear` | New session. |
+| `/resume` | Picker of saved sessions. |
+| `/dashboard`, `/sessions`, `/agents-dashboard` | Live roster of sessions in this pager. Hidden in minimal mode. Off with `SUPERCHARGE_AGENT_DASHBOARD=0` or `[dashboard].enabled = false`. |
+| `/compact [note]` | Shrink history. Auto-compact also runs near 85% of the context window. |
+| `/context` | Breakdown of the context window. |
+| `/session-info`, `/status`, `/info` | Auth, model, turns, context. `c` copies the session id. `y` copies the block. |
+| `/fork` | Branch history into a new agent. |
+| `/rewind`, `/undo` | Drop everything after an earlier turn. |
+| `/copy [n] [file]` | Copy the latest reply, or the Nth latest, or write it to a file. A backup is `~/.supercharge/last-copy.txt` (`SUPERCHARGE_COPY_FILE`). |
+| `/export` | Export the conversation. |
+| `/quit`, `/exit` | Quit. |
+| `/home`, `/welcome` | Back to the welcome screen. |
+| `/delete` | Delete this session after confirm. |
+| `/rename`, `/title` | Rename. `/rename --auto` lets auto-titles resume on Build sessions. |
+| `/history` | Fuzzy-search prompts in this session. `↑` on an empty prompt also recalls them. |
+
+## How the agent behaves
+
+| Command | What it does |
+| --- | --- |
+| `/model`, `/m`, `/models` | List or switch models. Optional effort as a second word. |
+| `/effort <level>` | Effort on the current model. |
+| `/setup`, `/login` | Provider wizard. |
+| `/format` | Switch Chat Completions, Messages, or Responses. |
+| `/logout` | Clear session auth. Does not wipe `/setup`. |
+| `/always-approve` | Toggle skip-all permission prompts. |
+| `/auto` | Toggle the classifier that approves safe tools. Shown when that mode is enabled. |
+| `/plan [text]` | Plan mode. |
+| `/view-plan`, `/show-plan`, `/plan-view` | Preview the saved plan. |
+| `/multiline`, `/ml` | Enter inserts a newline. Shift+Enter or Alt+Enter sends. |
+| `/compact-mode` | Tighter layout. |
+| `/vim-mode` | Vim keys in the scrollback. Saved as `[ui] vim_mode`. |
+| `/minimal`, `/fullscreen`, `/full` | Switch screen mode for this session only. |
+| `/edit-prompt` | Open `$VISUAL`, then `$EDITOR`, then `vi`. Saving does not send. |
+| `/btw <text>` | Side question that does not join the main turn. |
+| `/goal <objective>` | Autonomous goal. Also `status`, `pause`, `resume`, `clear`. Optional `--budget <tokens>`. |
+| `/loop [interval] <prompt>` | Repeat a prompt. Minimum interval 60 seconds. Jobs expire after 7 days. |
+| `/deep-research <query>` | Background research workflow. Watch it with `/workflow runs`. |
+| `/workflow [name]` | Launch or manage a workflow: `runs`, `pause`, `resume`, `stop`, `save`. |
+| `/workflows` | Catalog of saved workflows. |
+
+Project workflows: `.supercharge/workflows/*.rhai`. User workflows: `~/.supercharge/workflows/*.rhai`.
+
+## Extensions and look
+
+| Command | What it does |
+| --- | --- |
+| `/skills` | Skills tab. |
+| `/plugins` | Plugins tab. Shell also has `/plugins list`, `install`, `uninstall`, `update`, `reload`. |
+| `/marketplace` | Marketplace tab. |
+| `/hooks` | Hooks tab. |
+| `/mcps` | MCP server modal. |
+| `/config-agents`, `/agents` | Agent definitions and personas. Not the live dashboard. |
+| `/personas` | Create and edit personas. |
+| `/theme`, `/t` | Color theme. Fullscreen only. |
+| `/settings` | Settings modal, including default screen mode. |
+| `/isetup`, `/imodels`, `/imagine`, `/imagine-video` | Image and video providers. See [Provider setup](/docs/setup). |
+
+## Help and maintenance
+
+| Command | What it does |
+| --- | --- |
+| `/doctor` | Terminal, clipboard, color, input, notification checks. `/doctor fix` lists automatic fixes. Aliases `/terminal-setup`, `/terminal-check`, `/terminal-info`. |
+| `/tutorial`, `/tour`, `/onboarding` | Short onboarding topics. |
+| `/docs`, `/howto`, `/guides` | Built-in how-to picker. `/docs <title>` opens one guide. |
+| `/release-notes`, `/changelog` | Notes for this version. |
+| `/feedback [message]` | Feedback form, or send immediately when you pass text. |
+| `/import-claude` | Import permissions, env, MCP, hooks, and paths from `~/.claude`. |
+| `/usage`, `/cost` | This session's token totals. Supercharge does not sell credits. |
+| `/find`, `/jump`, `/timeline` | Fullscreen-only navigation. |
+| `/expand` | Minimal mode only. |
+
+`/memory`, `/flush`, and `/dream` are on [Memory](/docs/memory). `/remember` works even when the experimental memory switch is off.

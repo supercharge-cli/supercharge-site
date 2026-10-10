@@ -1,4 +1,17 @@
 {
   "title": "Supercharge CLI",
-  "pages": ["index", "install", "modes", "setup", "memory", "e2b"]
+  "pages": [
+    "index",
+    "install",
+    "setup",
+    "commands",
+    "slash",
+    "keys",
+    "sessions",
+    "permissions",
+    "config",
+    "memory",
+    "extensions",
+    "modes"
+  ]
 }

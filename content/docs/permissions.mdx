@@ -1,0 +1,42 @@
+---
+title: Permissions
+description: Ask, auto, always-approve, and allow or deny rules
+---
+
+# Permissions
+
+By default the agent asks before it runs a shell command or edits a file.
+
+## Modes
+
+| How | Effect |
+| --- | --- |
+| Default | Ask each time. |
+| `/always-approve`, Ctrl+O, `--yolo`, `--permission-mode bypassPermissions` | Skip approval prompts. |
+| `/auto` | A classifier approves tools it treats as safe. Dangerous ones can still ask. The command appears only when that feature is on. |
+| Shift+Tab | Cycle Normal, Plan, Auto (if enabled), Always-approve. |
+| `/plan` | Plan before coding. `/view-plan` shows the saved plan. |
+
+Turning on the mode you are already in switches back to ask. Turning on one mode while another is active switches to the new one.
+
+Always-approve is the mode to use when nobody is at the keyboard (`supercharge agent serve`, a daemon, CI). Deny rules and hooks still apply.
+
+## Rules
+
+`--allow` and `--deny` are repeatable and work in the UI and in headless mode. They gate a tool. They do not remove it. `--disallowed-tools` removes the tool from a headless run.
+
+```bash
+supercharge --deny 'Bash(rm *)' --allow 'Bash(git *)'
+supercharge -p "lint the repo" --deny 'Edit(**)'
+```
+
+| Prefix | Matches |
+| --- | --- |
+| `Bash(...)` | Shell text. `*` matches any characters, including spaces. `Bash(git:*)` is a prefix match. A bare `Bash` matches every command. |
+| `Edit(...)`, `Write(...)`, `Read(...)`, `Grep(...)` | Paths. `*` is one level. `**` is recursive. |
+| `WebFetch(...)` | URL glob, or `domain:host`. |
+| `MCPTool(...)` | An MCP tool call. |
+
+Project memory of "always allow this command" is on by default (`[ui] remember_tool_approvals = true`). The first approval prompt's preselected row is `[ui] default_selected_permission`.
+
+Plan mode and permission prompts are per session unless you pass the flags at launch or save the UI defaults.

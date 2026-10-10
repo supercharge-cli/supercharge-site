@@ -161,7 +161,7 @@ function TechMarquee() {
     { icon: Bot, text: 'Docs AI' },
     { icon: Zap, text: 'Inbox daemon' },
     { icon: Shield, text: 'Bring your own key' },
-    { icon: Rocket, text: 'ACP WebSocket' },
+    { icon: Rocket, text: 'Subagents' },
     { icon: Clock, text: 'Curated memory' },
   ];
 
@@ -354,7 +354,7 @@ export default function HomePage() {
           className="text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto mb-12 leading-relaxed animate-fade-in-up opacity-0"
           style={{ animationDelay: '0.6s', animationFillMode: 'forwards' }}
         >
-          A free Rust coding agent. Install the CLI, connect the model provider you already pay in <span className="font-mono text-zinc-200">/setup</span>, and work in the terminal, over an inbox, or inside an E2B sandbox.
+          A free Rust coding agent. Install the CLI, connect the model provider you already pay in <span className="font-mono text-zinc-200">/setup</span>, and work in the terminal or over an inbox.
         </p>
 
         {/* CTA Buttons with glow effects */}
@@ -476,9 +476,9 @@ export default function HomePage() {
         <div className="group flex flex-col md:flex-row items-center justify-between gap-6 p-8 rounded-2xl bg-zinc-900/30 border border-zinc-800 hover:border-orange-500/30 transition-all duration-300 backdrop-blur-sm">
           <div className="text-center md:text-left">
             <h3 className="text-xl font-semibold text-zinc-100 mb-2">
-              Provider, memory, sandbox
+              Provider, memory, commands
             </h3>
-            <p className="text-zinc-400">/setup, curated notes, and how E2B sandboxes get the agent.</p>
+            <p className="text-zinc-400">/setup, slash commands, config, and the local daemon.</p>
           </div>
           <Link
             href="/docs/setup"

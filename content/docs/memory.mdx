@@ -1,19 +1,48 @@
 ---
 title: Memory
-description: Curated user and environment notes
+description: Curated notes versus experimental memory commands
 ---
 
 # Memory
 
-Curated notes are on by default. They are separate from the experimental memory v2 topic files.
+Two stores exist. Do not mix them up.
 
-Files live under `$SUPERCHARGE_HOME/memories/`:
+## Curated notes (on by default)
 
-- `USER.md` is the person. One user, shared across bots. Cap is 1375 characters.
-- `MEMORY.md` is this bot’s environment. Cap is 2200 characters.
+The agent keeps short notes it can add, replace, and remove in one call. Files:
 
-On a normal laptop both files sit in `~/.supercharge/memories/`.
+| File | Who it describes | Cap |
+| --- | --- | --- |
+| `~/.supercharge/memories/USER.md` | You. Shared across bots, because there is one user. | 1375 characters |
+| `~/.supercharge/memories/MEMORY.md` | This bot's environment and conventions. | 2200 characters |
 
-Entries are separated with `§`. The agent can add, replace, and remove in one call. The character cap is checked on the final list. Prompt-injection-like content is rejected.
+`SUPERCHARGE_HOME` changes the parent. Entries are separated with `§`. The cap is checked on the final list. Notes that look like prompt injection are rejected. If a file is free-form and not the entry format, it is not overwritten. A `.md.bak` is kept.
 
-On an E2B host, the shared profile is `agent-runtime/memories/USER.md`. Each bot keeps `agent-runtime/bots/<id>/memories/MEMORY.md`. A new sandbox does not see notes that exist only on your laptop.
+These notes are inserted into the system prompt the next time that prompt is built, on a binary that includes the feature. They are not the experimental topic files.
+
+In the prompt, `/remember <text>` saves a note immediately.
+
+```
+/remember the staging host is deploy.internal
+```
+
+## Experimental memory v2
+
+Off unless you set `SUPERCHARGE_MEMORY=1` or:
+
+```toml
+[memory]
+enabled = true
+```
+
+Then these commands appear:
+
+| Command | What it does |
+| --- | --- |
+| `/memory`, `/mem` | Browse saved memories. `/memory on` and `/memory off` toggle the feature. `/memory status` shows queue and retention diagnostics in a v2 session. |
+| `/flush` | Summarize this session into memory now. Use it before `/compact` when you want the summary kept. |
+| `/dream` | Consolidate session logs into topics. |
+
+`/dream` in upstream Grok depends on Grok's memory service. On this CLI, treat `/dream` as available only when your build and memory backend actually support it. If the command says it cannot run, use `/flush` and `/remember` instead.
+
+Search across sessions uses the memory tool when that backend is enabled. Curated files stay the place for facts you want in every new prompt without turning v2 on.

@@ -1,0 +1,46 @@
+---
+title: Keys
+description: Keyboard and prompt editing in the terminal UI
+---
+
+# Keys
+
+Bindings are built in. They are not remapped from a keymap file.
+
+## Prompt
+
+| Key | Action |
+| --- | --- |
+| Enter | Send. In `/multiline`, Enter inserts a newline and Shift+Enter or Alt+Enter sends. |
+| Tab | Move focus between the prompt and the scrollback. |
+| Ctrl+C | With a draft, the first press clears it. With an empty composer, it cancels the running turn. |
+| Esc | Does not cancel a turn. Idle, press Esc twice within 800ms to clear a non-empty prompt, or to open rewind when the prompt is empty and there is history. |
+| Ctrl+N | New session. Same as `/new`. |
+| Ctrl+O | Toggle always-approve. |
+| Shift+Tab | Cycle permission mode: Normal, Plan, Auto when enabled, Always-approve. |
+| Ctrl+G | Edit the current draft in `$VISUAL` or `$EDITOR` (minimal mode command palette uses the same action). |
+| Ctrl+M | In the prompt, toggle multiline. In the scrollback, open the model picker. |
+| @ | File picker. `@src/main.rs:10-50` attaches a line range. `@!.env` includes ignored and hidden files. |
+| ↑ | On an empty prompt, recall history. |
+
+## Scrollback
+
+Simple mode is the default. `/vim-mode` or `[ui] vim_mode = true` enables the letter keys.
+
+| Action | Simple | Vim |
+| --- | --- | --- |
+| Next / previous entry | Down / Up | `j` / `k` |
+| Next / previous turn | Shift+Right / Shift+Left | Shift+L / Shift+H |
+| Top / bottom | | `g` / Shift+G |
+| Collapse / expand | Left / Right | `h` / `l` |
+| Fold toggle / fold all | | `e` / Shift+E |
+| Thinking blocks | Ctrl+E | Ctrl+E |
+| Copy entry / copy metadata | | `y` / Shift+Y |
+| Open fullscreen viewer | Enter | Enter |
+| Page | PageUp / PageDown, Ctrl+U / Ctrl+D | same |
+
+Arrow keys, Tab, Esc, Space, PageUp, PageDown, and Ctrl+letter shortcuts work in both modes. A bare letter in simple mode jumps back to the prompt and types that letter.
+
+## Paste
+
+Paste text with the terminal paste shortcut. On Windows, Alt+V is the documented paste fallback because Windows Terminal can swallow Ctrl+V when the clipboard is an image. Image paste from the clipboard is supported where the OS clipboard API can read an image. On Linux and Windows the focus tip that probes the clipboard for an image is off. macOS reads the image clipboard.

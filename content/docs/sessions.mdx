@@ -1,0 +1,72 @@
+---
+title: Sessions
+description: Save, resume, rewind, compact, and export conversations
+---
+
+# Sessions
+
+Every conversation is a session under `~/.supercharge/sessions/`. It keeps prompts, replies, tool calls, edits, and task state.
+
+## Start and resume
+
+```bash
+supercharge
+supercharge -c
+supercharge -r <session-id>
+supercharge -r "session title"
+```
+
+Inside the UI: `/new`, `/resume`, Ctrl+N, or `/home` to return to the welcome list. On that list, `d` then `y` deletes a session you are not inside. `/delete` deletes the current one after you confirm.
+
+`-s` / `--session-id` creates a new session with a UUID you choose. It does not open an old one.
+
+`--fork-session` with `-c` or `-r` copies history into a new id instead of appending.
+
+## Names
+
+```
+/rename migration notes
+/rename --auto
+```
+
+`/rename --auto` only clears a manual pin so auto-titling can run again on Build sessions. Chat conversations do not auto-title.
+
+## Compact and rewind
+
+```
+/compact
+/compact keep the auth implementation
+/rewind
+```
+
+Auto-compact runs when the context window reaches about 85%. Change that with `[session] auto_compact_threshold_percent`. `/context` shows system prompt, messages, reasoning, free space, and estimates for tools, skills, and MCP.
+
+`/fork` branches from the current point without deleting the original.
+
+## Copy and export
+
+```
+/copy
+/copy 2
+/copy out.md
+/export
+```
+
+`/session-info` shows auth method, model, turn count, and context. From a shell, stored token totals:
+
+```bash
+supercharge usage <session-id> [turn]
+```
+
+## Dashboard
+
+`/dashboard` (also `/sessions`) lists top-level sessions in this pager so you can peek, reply, pin, rename, stop, or attach. `Ctrl+\` opens it from the keys that the guide binds to the dashboard. It is not `/agents`, which edits agent definitions.
+
+Disable it with `SUPERCHARGE_AGENT_DASHBOARD=0` or:
+
+```toml
+[dashboard]
+enabled = false
+```
+
+Minimal mode does not show the dashboard.

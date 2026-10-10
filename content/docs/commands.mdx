@@ -1,0 +1,68 @@
+---
+title: CLI commands
+description: Flags for the terminal UI, one-shot prompts, resume, and subcommands
+---
+
+# CLI commands
+
+`supercharge` with no arguments opens the terminal UI in the current directory.
+
+```bash
+supercharge --help
+supercharge --version
+supercharge update
+```
+
+## Everyday flags
+
+| Flag | What it does |
+| --- | --- |
+| `-p`, `--single <PROMPT>` | One prompt, then exit. Also started by `--prompt-json` or `--prompt-file`. |
+| `-m`, `--model <MODEL>` | Model id for this run. |
+| `-c`, `--continue` | Continue the newest session in this directory. |
+| `-r`, `--resume <ID_OR_TITLE>` | Resume by session id, or by title in this directory. Prefer the id in scripts. |
+| `-s`, `--session-id <UUID>` | Create a new session with this UUID. It does not resume. Errors if the id is already used. |
+| `--fork-session` | With `-r` or `-c`, copy history into a new session id. |
+| `--cwd <PATH>` | Working directory. |
+| `--yolo` | Approve every tool call. Same idea as `/always-approve`. |
+| `--permission-mode <MODE>` | `bypassPermissions` is always-approve. |
+| `--allow <RULE>` | Repeatable allow rule. Works in the TUI and headless. |
+| `--deny <RULE>` | Repeatable deny rule. |
+| `--rules <TEXT>` | Extra text appended to the built-in system prompt. |
+| `--system-prompt-override <TEXT>` | Replace the built-in system prompt. Alias `--system-prompt`. An empty value is ignored. |
+| `--effort`, `--reasoning-effort <LEVEL>` | `none`, `minimal`, `low`, `medium`, `high`, `xhigh`, `max`, or a level that model advertises. |
+| `--output-format <FMT>` | Headless: `plain`, `json`, `streaming-json`, `streaming-messages-json`. |
+| `--include-partial-messages` | Raw stream deltas. Only with `streaming-messages-json`. |
+| `--tools <LIST>` | Headless allowlist of built-in tool ids, comma-separated. |
+| `--disallowed-tools <LIST>` | Headless denylist. `Agent` blocks all subagents. `Agent(explore)` blocks one type. |
+| `--max-turns <N>` | Headless stop after this many turns. |
+| `--prompt-file <PATH>` | Prompt text from a file. |
+| `--prompt-json <JSON>` | Prompt as JSON content blocks. |
+| `--verbatim` | Send the prompt exactly as given. |
+| `--minimal` / `--fullscreen` | Session screen mode. Does not rewrite `config.toml`. |
+| `--no-auto-update` | Skip the update check for this process. |
+| `--sandbox <PROFILE>` | Local filesystem and network isolation profile for tool runs. This is the CLI sandbox, not a remote VM. |
+| `--remote <URL>` | Attach to an ACP WebSocket, for example `ws://127.0.0.1:2419/ws`. |
+| `--secret <TOKEN>` | Secret for that remote server. |
+
+`--tools`, `--disallowed-tools`, and `--max-turns` are ignored in the interactive UI, with a warning. The shell tool id is `run_terminal_cmd`.
+
+```bash
+supercharge -p "Explain this repo" --tools "read_file,grep,list_dir"
+supercharge -p "Review the diff" --disallowed-tools "web_search,web_fetch,search_replace"
+supercharge -c -p "Continue the migration"
+supercharge -r 3f2a1c0e-0000-4000-8000-000000000000
+```
+
+## Subcommands
+
+| Command | What it does |
+| --- | --- |
+| `supercharge models` | List models from the saved provider. |
+| `supercharge login` | Start a sign-in flow when you use optional session auth. Provider keys still go through `/setup`. |
+| `supercharge logout` | Clear cached session credentials. |
+| `supercharge update` | Update the installed binary. |
+| `supercharge agent …` | Long-running agent. See [ACP and daemon](/docs/modes). |
+| `supercharge usage <session-id> [turn]` | Print stored token totals for a local session. |
+
+`supercharge clone <url> [dir]` is off unless Grove clone is enabled (`SUPERCHARGE_CLONE=1`, `SUPERCHARGE_GROVE=1`, or the matching config). The default checkout is depth 1. `--full-history` clones everything.

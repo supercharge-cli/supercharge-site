@@ -1,0 +1,68 @@
+---
+title: Extensions
+description: MCP servers, skills, plugins, hooks, and project rules
+---
+
+# Extensions
+
+## MCP
+
+MCP servers add tools (GitHub, databases, browsers, and anything that speaks the protocol).
+
+```
+/mcps
+```
+
+Configure servers in `~/.supercharge/config.toml` under the MCP table your build documents in `/docs` → MCP Servers, or install them from a plugin. A server named in an agent profile's frontmatter wins over the same name in `config.toml` when that feature is present in your binary.
+
+Headless runs keep MCP meta-tools even when `--tools` limits built-in tools, unless you deny them.
+
+File-backed tool arguments: the `use_tool` tool accepts `tool_input_file` (a JSON arguments object) or a JSON file invocation, so a large payload does not have to sit inline in the prompt.
+
+## Skills
+
+A skill is a folder with `SKILL.md`. User-invocable skills show up as slash commands. `/skills` lists what is loaded.
+
+## Plugins
+
+A plugin bundles skills, commands, agents, hooks, and MCP servers.
+
+```
+/plugins
+/marketplace
+/plugins install <source>
+/plugins uninstall <name>
+/plugins update
+/plugins reload
+```
+
+In the terminal UI the modal does the same work. Trust is separate from install. Read the hooks guide inside `/docs` before you enable a hook that runs a shell command.
+
+## Hooks
+
+Hooks are scripts or HTTP callbacks around tool calls (before and after).
+
+```
+/hooks
+```
+
+The shell also accepts `/hooks-list`, `/hooks-trust`, `/hooks-add`, `/hooks-remove`, and `/hooks-untrust`. The pager folds those into the modal. Trusting a project is an explicit step. Opening the modal does not trust it.
+
+## Project rules
+
+Put an `AGENTS.md` in a repo or a subdirectory. The agent loads it for work in that tree. A nearer file adds to the parent instructions rather than replacing the whole product prompt.
+
+`--rules` appends text to the built-in system prompt for one process. `--system-prompt-override` replaces the built-in prompt for one process. The Supercharge App uses the override flag for a per-session prompt and `--rules` when a provider should only append text.
+
+## Subagents
+
+The model can spawn a child session with the subagent tool. `/config-agents` manages definitions. `/personas` edits personas a child can wear.
+
+Block children on a headless run:
+
+```bash
+supercharge -p "Fix the parser" --disallowed-tools "Agent"
+supercharge -p "Fix the parser" --disallowed-tools "Agent(explore)"
+```
+
+`/dashboard` is the live list of sessions. It is not the definition editor.

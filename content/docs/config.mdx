@@ -1,0 +1,87 @@
+---
+title: Config
+description: config.toml, environment variables, and which layer wins
+---
+
+# Config
+
+Main file: `~/.supercharge/config.toml`. If it is missing, built-in defaults are used. Create it by running `/setup`, or edit it yourself.
+
+Other files:
+
+| File | Role |
+| --- | --- |
+| `~/.supercharge/managed_config.toml` | Defaults shipped by an admin. Under your `config.toml`. |
+| `requirements.toml` | Org pin. Clamps every layer below it, including overlays. |
+| `~/.supercharge/pager.toml` | Terminal UI details such as scrollback fold behavior. |
+| `.supercharge/workflows/*.rhai` | Workflows for this repo. |
+| `~/.supercharge/workflows/*.rhai` | Workflows for your user. |
+| `AGENTS.md` | Instructions for the agent in a directory. Nearer files apply to that subtree. |
+
+## What wins
+
+Highest priority first:
+
+1. CLI flags (`--yolo`, `--model`, `--sandbox`)
+2. Environment variables (not the provider API key)
+3. `requirements.toml` / device management
+4. `SUPERCHARGE_CONFIG` or `SUPERCHARGE_CONFIG_PATH` overlay
+5. `config.toml`
+6. `managed_config.toml`
+7. Built-in defaults
+
+`SUPERCHARGE_CONFIG` is a JSON object. `SUPERCHARGE_CONFIG_PATH` is an extra JSON or TOML file. The inline JSON wins if both are set. The overlay is deep-merged and only a small allowlist of soft settings is kept (`models`, `features`, a narrowed toolset, and shell environment filters). It cannot set the API key or turn trust off.
+
+```bash
+SUPERCHARGE_CONFIG='{"models":{"default_reasoning_effort":"high"}}' supercharge -p "Review the change"
+```
+
+## Useful keys
+
+```toml
+[cli]
+auto_update = true
+
+[models]
+default = "your-model-id"
+temperature = 0.7
+top_p = 0.95
+max_completion_tokens = 8192
+
+[ui]
+vim_mode = false
+show_thinking_blocks = true
+remember_tool_approvals = true
+screen_mode = "fullscreen"
+
+[session]
+auto_compact_threshold_percent = 85
+
+[dashboard]
+enabled = true
+
+[memory]
+enabled = false
+```
+
+`[ui] screen_mode` is the default for a new `supercharge`. `/minimal` and `--minimal` change only the current session. Set the default from `/settings` → Default screen mode.
+
+`[memory] enabled` or `SUPERCHARGE_MEMORY=1` turns on the experimental memory v2 commands (`/memory`, `/flush`, `/dream`). Curated `USER.md` / `MEMORY.md` notes are separate and on by default. See [Memory](/docs/memory).
+
+## Environment
+
+| Variable | Meaning |
+| --- | --- |
+| `SUPERCHARGE_HOME` | Replace `~/.supercharge`. |
+| `SUPERCHARGE_BIN_DIR` | Install directory used by the installer. |
+| `SUPERCHARGE_VERSION` | Version the installer should fetch. |
+| `SUPERCHARGE_NO_MODIFY_PATH` | Installer skips PATH edits when `1`. |
+| `SUPERCHARGE_MEMORY` | `1` enables experimental memory v2. |
+| `SUPERCHARGE_AGENT_DASHBOARD` | `0` hides the dashboard. |
+| `SUPERCHARGE_AGENT_SECRET` | Secret for `agent serve` when `--secret` is omitted. |
+| `SUPERCHARGE_PASSWORD` or `SUPERAGENT_API_TOKEN` | Secret for `agent daemon`. |
+| `SUPERAGENT_BIND` | Bind address for the daemon. |
+| `SUPERCHARGE_COPY_FILE` | Where `/copy` writes its backup. |
+| `VISUAL`, `EDITOR` | External editor for `/edit-prompt`. |
+
+Provider base URL and API key belong in `config.toml` via `/setup`, not in a global env var.

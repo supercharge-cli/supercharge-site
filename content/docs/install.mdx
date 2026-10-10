@@ -1,30 +1,97 @@
 ---
 title: Install
-description: Install the published Supercharge CLI
+description: Install, pin a version, update, and put the binary on PATH
 ---
 
 # Install
 
-The installer is served from this site. It downloads the binary from the public GitHub release `iotserver24/supercharge-releases`.
+The installer script is served from this site. It downloads the binary from the public GitHub release repo `iotserver24/supercharge-releases`.
+
+## macOS and Linux
+
+Latest published release:
 
 ```bash
 curl -fsSL https://superchargeai.in/install.sh | bash
 ```
 
-Pin a release by passing the version to the script:
+Pin a version (the number is the release tag without `v`):
 
 ```bash
 curl -fsSL https://superchargeai.in/install.sh | bash -s 1.3.20
 ```
 
-Windows PowerShell:
+Or:
+
+```bash
+SUPERCHARGE_VERSION=1.3.20 bash -c "$(curl -fsSL https://superchargeai.in/install.sh)"
+```
+
+`1.3.20` is only an example of a published tag. Use the tag you want from the releases page. This docs set describes source **1.3.32**.
+
+Git Bash and MSYS2 on Windows can use the same bash script.
+
+## Windows PowerShell
 
 ```powershell
 irm https://superchargeai.in/install.ps1 | iex
 ```
 
-`1.3.20` is an example of a published tag. Check the releases page for the tag you want. The source checkout these docs follow is 1.3.32, which is newer than that example.
+A specific version:
 
-After install, the binary on a typical Linux user path is `~/.local/bin/supercharge`.
+```powershell
+& ([scriptblock]::Create((irm https://superchargeai.in/install.ps1))) -Version 1.3.20
+```
 
-Source code is at [github.com/iotserver24/supercharge](https://github.com/iotserver24/supercharge).
+## Platforms
+
+| OS | Architectures |
+| --- | --- |
+| Linux | x86_64, aarch64 |
+| macOS | x86_64 (Intel), aarch64 (Apple Silicon) |
+| Windows | x86_64, aarch64 |
+
+Asset names look like `supercharge-linux-x86_64`, `supercharge-macos-aarch64`, and `supercharge-windows-x86_64.exe`. On Apple Silicon, a Rosetta `x86_64` shell still gets the arm64 build.
+
+## After install
+
+```bash
+supercharge --version
+supercharge
+```
+
+`sc` is the same binary when the installer linked it and no other `sc` was already on PATH.
+
+The bash installer adds `~/.local/bin` (or `SUPERCHARGE_BIN_DIR`) to bash, zsh, or fish startup files inside a marked block, and it keeps a backup named `*.supercharge.bak.*`. A piped installer cannot change the parent shell's PATH. Open a new terminal, or run the `export PATH=...` line the installer prints. Set `SUPERCHARGE_NO_MODIFY_PATH=1` on the installer side of the pipe when you manage PATH yourself:
+
+```bash
+curl -fsSL https://superchargeai.in/install.sh | SUPERCHARGE_NO_MODIFY_PATH=1 bash
+```
+
+The PowerShell installer adds `%USERPROFILE%\.local\bin` to the user PATH, including the current session.
+
+## Installer environment
+
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `SUPERCHARGE_VERSION` | latest | Pin `X.Y.Z` |
+| `SUPERCHARGE_GITHUB_REPO` | `iotserver24/supercharge-releases` | Release repo the binary is downloaded from |
+| `SUPERCHARGE_BIN_DIR` | `~/.local/bin` | Where `supercharge` is installed. No colons or newlines. |
+| `SUPERCHARGE_HOME` | `~/.supercharge` | Config and sessions |
+| `SUPERCHARGE_NO_MODIFY_PATH` | `0` | `1` skips shell startup edits and extra PATH links |
+
+## Update and build from source
+
+Inside an installed CLI:
+
+```bash
+supercharge update
+```
+
+From a source checkout, with the pinned Rust toolchain:
+
+```bash
+cargo build --release -p supercharge-pager-bin
+```
+
+The binary is `target/release/supercharge-pager`. Put that file on PATH as `supercharge`. Upstream Grok installers install a different product.
