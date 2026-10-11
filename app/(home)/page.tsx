@@ -413,13 +413,13 @@ export default function HomePage() {
             <div className="absolute inset-0 animate-shimmer" />
           </Link>
           <a
-            href="https://github.com/iotserver24/supercharge"
+            href="https://github.com/iotserver24/supercharge-app"
             target="_blank"
             rel="noopener noreferrer"
             className="group flex items-center gap-2 px-10 py-4 bg-zinc-900/80 border border-zinc-700 hover:border-orange-500/50 hover:bg-zinc-800 text-zinc-300 rounded-full font-semibold transition-all duration-300 backdrop-blur-sm"
           >
             <Github className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-            <span>CLI source</span>
+            <span>App</span>
           </a>
           <Link
             href="/donate"

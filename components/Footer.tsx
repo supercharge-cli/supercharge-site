@@ -28,7 +28,7 @@ const columns = [
     links: [
       { href: '/docs/modes', label: 'ACP and daemon' },
       { href: '/docs/extensions', label: 'MCP, skills, hooks' },
-      { href: 'https://github.com/iotserver24/supercharge', label: 'Source' },
+      { href: 'https://github.com/iotserver24/supercharge-app', label: 'App' },
       { href: 'https://github.com/iotserver24/supercharge-releases', label: 'Releases' },
     ],
   },
@@ -45,14 +45,14 @@ export function Footer() {
           </p>
           <p className="mt-3 max-w-xs text-sm leading-6">
             A free Rust coding agent. Connect the model provider you already pay in{' '}
-            <span className="font-mono text-zinc-200">/setup</span>.
+            <span className="font-mono text-zinc-200">/setup</span>. The desktop app is closed source and free to use.
           </p>
           <a
-            href="https://github.com/iotserver24/supercharge"
+            href="https://github.com/iotserver24/supercharge-app"
             className="mt-5 inline-flex items-center gap-2 text-sm text-zinc-300 hover:text-orange-400"
           >
             <Github className="h-4 w-4" />
-            iotserver24/supercharge
+            iotserver24/supercharge-app
           </a>
         </div>
         {columns.map((column) => (
