@@ -62,7 +62,10 @@ supercharge -r 3f2a1c0e-0000-4000-8000-000000000000
 | `supercharge login` | Start a sign-in flow when you use optional session auth. Provider keys still go through `/setup`. |
 | `supercharge logout` | Clear cached session credentials. |
 | `supercharge update` | Update the installed binary. |
-| `supercharge agent …` | Long-running agent. See [ACP and daemon](/docs/modes). |
+| `supercharge acp setup --editor zed` | Configure Zed to launch Supercharge as an ACP agent. Add `--print` to preview. |
+| `supercharge agent stdio` | ACP agent for an editor or SDK over stdin/stdout. |
+| `supercharge agent serve` | ACP agent over WebSocket. See [Agent Client Protocol (ACP)](/docs/acp). |
+| `supercharge agent daemon` | HTTP inbox when its companion server is present; otherwise ACP WebSocket fallback. See [Run modes](/docs/modes). |
 | `supercharge usage <session-id> [turn]` | Print stored token totals for a local session. |
 
 `supercharge clone <url> [dir]` is off unless Grove clone is enabled (`SUPERCHARGE_CLONE=1`, `SUPERCHARGE_GROVE=1`, or the matching config). The default checkout is depth 1. `--full-history` clones everything.

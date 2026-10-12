@@ -43,6 +43,6 @@ Then these commands appear:
 | `/flush` | Summarize this session into memory now. Use it before `/compact` when you want the summary kept. |
 | `/dream` | Consolidate session logs into topics. |
 
-`/dream` in upstream Grok depends on Grok's memory service. On this CLI, treat `/dream` as available only when your build and memory backend actually support it. If the command says it cannot run, use `/flush` and `/remember` instead.
+`/dream` requires a supported memory backend. If the command says it cannot run, use `/flush` for the current session or `/remember` for a curated note instead.
 
 Search across sessions uses the memory tool when that backend is enabled. Curated files stay the place for facts you want in every new prompt without turning v2 on.

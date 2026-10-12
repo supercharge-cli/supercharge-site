@@ -1,0 +1,136 @@
+---
+title: Agent Client Protocol (ACP)
+description: Connect editors and applications over stdio or WebSocket, manage sessions, authentication, permissions, and extensions
+---
+
+# Agent Client Protocol (ACP)
+
+[ACP](https://agentclientprotocol.com/) lets an editor or application control Supercharge as a coding agent over JSON-RPC. A client initializes the connection, creates or loads a session, sends prompts, and receives streamed updates. The CLI must be installed on the machine that will run the agent and access the project files.
+
+For an interactive terminal use `supercharge`; for a single prompt that prints and exits use `supercharge -p "Your task"`. Neither is an ACP transport.
+
+## Choose a transport
+
+| Transport | Start it with | Best for |
+| --- | --- | --- |
+| Local stdio | `supercharge agent stdio` | An editor or SDK that starts a local agent process. JSON-RPC uses stdin and stdout. |
+| WebSocket | `supercharge agent serve` | A client connecting to an agent process you manage. ACP is served at `/ws`. |
+| Relay | `supercharge agent headless` | An agent connecting outward to an already configured WebSocket relay. It is not the one-shot `-p` mode. |
+| HTTP inbox | `supercharge agent daemon` | A separate HTTP chat integration. If its companion server executable is unavailable, this command falls back to an ACP WebSocket server. |
+
+The [Run modes](/docs/modes) page has a shorter comparison. Put options shared by transports **before** the transport name, and transport-specific options **after** it:
+
+```bash
+supercharge agent --model your-model-id --always-approve stdio
+supercharge agent --always-approve serve --bind 127.0.0.1:2419 --secret YOUR_TOKEN
+```
+
+Run `supercharge agent --help` and `supercharge agent <mode> --help` for the complete options in your installed release.
+
+## Set up an editor
+
+### Zed
+
+Install the CLI on your `PATH`, then either preview the configuration or write it:
+
+```bash
+supercharge acp setup --editor zed --print
+supercharge acp setup --editor zed
+```
+
+The setup command adds a custom Supercharge agent to Zed's `agent_servers` settings. Its command starts `supercharge agent stdio`, **not** the terminal UI. In Zed's Agent Panel, start a new Supercharge thread. Slash commands appear after the ACP session starts.
+
+If your provider is not configured, run `supercharge login` in a terminal, complete `/setup`, then start a new editor thread. Existing settings in `~/.supercharge/config.toml` are reused by the editor. The editor may also show authentication methods offered during ACP initialization. Provider availability depends on your configuration; an unconfigured provider produces a setup error rather than a usable session. See [Provider setup](/docs/setup).
+
+### Other ACP clients
+
+Configure the client to spawn `supercharge` with arguments `agent`, `stdio`, and optionally shared flags before `stdio`. Let the client manage JSON-RPC framing, request IDs, notifications, and permission requests. Do not send human-readable terminal prompts to the stdio process.
+
+```json
+{
+  "command": "supercharge",
+  "args": ["agent", "stdio"]
+}
+```
+
+For unattended use, add `--always-approve` before `stdio`. Interactive editors can omit it and handle permission requests instead. The [ACP specification](https://agentclientprotocol.com/) documents client capabilities and the base protocol.
+
+## WebSocket server and remote CLI
+
+```bash
+supercharge agent --always-approve serve --bind 127.0.0.1:2419 --secret YOUR_TOKEN
+```
+
+`serve` binds to `127.0.0.1:2419` by default. `--secret` may be supplied with `SUPERCHARGE_AGENT_SECRET`; if omitted, the server generates a secret and prints its connection information on startup. Keep the secret private. Clients connect to `ws://127.0.0.1:2419/ws?server-key=YOUR_TOKEN`. A Supercharge terminal UI can attach to the same server:
+
+```bash
+supercharge --remote ws://127.0.0.1:2419/ws --secret YOUR_TOKEN
+```
+
+`--remote` and `--secret` on the second command are **top-level client** flags; `serve --secret` is a **server** flag. Use `wss://` behind a properly secured TLS endpoint when connecting across networks. The default loopback bind is the safest choice for local clients. Reconnecting to a server is different from starting a new local stdio process; clients should load their saved session ID when resuming.
+
+### HTTP inbox is separate
+
+```bash
+supercharge agent --always-approve daemon --bind 127.0.0.1:8790 --secret YOUR_TOKEN
+```
+
+The daemon's default bind is `0.0.0.0:8790`, so set an explicit loopback bind when only local access is needed. `SUPERAGENT_BIND` sets the bind address and `SUPERCHARGE_PASSWORD` supplies the secret when the flags are omitted. With `supercharge-superagent-server` beside the CLI or on `PATH`, the daemon runs an HTTP inbox with `/v1/chat`; clients communicate over HTTP and its event stream, **not** ACP JSON-RPC. If that executable is missing, the CLI reports the fallback and starts an ACP WebSocket server on the daemon's bind address instead. Check the startup output before choosing a client protocol. Never expose a listener with a weak or missing secret.
+
+## Session lifecycle
+
+1. **Initialize:** the client sends `initialize` and receives capabilities and available authentication methods. Complete authentication if the agent requests it.
+2. **Create or load:** send `session/new` with a working directory (`cwd`) and `mcpServers`, or `session/load` with a saved session ID. Keep the ID returned by the agent.
+3. **Prompt:** send `session/prompt` with text content blocks and that session ID. The agent sends `session/update` notifications while working, followed by the prompt response.
+4. **Continue or cancel:** send another prompt to the same session, or `session/cancel` to interrupt the active turn. A client can load an existing session in a later connection.
+
+Illustrative session creation and prompt parameters (an ACP SDK handles JSON-RPC envelopes and concurrent messages):
+
+```json
+{"cwd":"/path/to/project","mcpServers":[],"_meta":{"yoloMode":true}}
+```
+
+```json
+{"sessionId":"returned-session-id","prompt":[{"type":"text","text":"Explain this project"}]}
+```
+
+An `initialize` response advertises capabilities. Clients should check those capabilities rather than assuming every optional operation is supported. `session/update` can carry `agent_message_chunk`, `agent_thought_chunk`, `tool_call`, `tool_call_update`, and `plan` updates. Show tool status and permission requests separately from final assistant text. Available slash commands arrive as an `available_commands_update` after the session starts.
+
+## Authentication and permissions
+
+- Configure a model provider with `/setup` in the terminal UI or `supercharge login`; then start or reload the ACP session. A stored provider key and supported session-based sign-in methods are distinct paths. `supercharge logout` clears cached session credentials, not provider settings.
+- Without `--always-approve`, the client must present and answer ACP permission requests. If the client cannot do so, tool calls can remain blocked. `--always-approve` (alias `--yolo`) removes interactive tool approval for the process; only use it where the client and workspace are trusted.
+- `session/new` can set `_meta.yoloMode: true` per session. `_meta.autoMode: true` requests automatic permission decisions when available. Deny rules and hooks still apply in always-approve mode. See [Permissions](/docs/permissions).
+- `--agent-profile <PATH>` loads an agent profile, `--model <ID>` selects a model, and `--plugin-dir <DIR>` loads an explicitly trusted plugin directory for that process. Inspect plugins before passing this flag: its hooks and MCP servers activate without an additional trust prompt.
+- `--leader` shares a backend process when supported; `--no-leader` forces a local agent. `--leader-socket <PATH>` isolates a local leader socket. Use `supercharge leader --help` to inspect lifecycle commands.
+
+## Models and session options
+
+`session/new` and `session/load` return `configOptions`. Clients can use `session/set_config_option` to update a live option and should render the returned full option list. The agent also sends `config_option_update` notifications so attached clients stay in sync.
+
+| `configId` | Purpose |
+| --- | --- |
+| `model` | Select an advertised model by string ID. |
+| `reasoning_effort` | Select an advertised effort level for a model that supports it. |
+
+Available models and levels depend on the configured provider. Do not assume every model offers effort control. An optional `_meta` on `session/new` can contain `rules` (extra instructions), `systemPromptOverride` (replacement instructions), or `agentProfile`. Extra `rules` apply when a session is created; the override can also be synchronized on attach. Treat overrides as trusted client input.
+
+## MCP servers and extension methods
+
+Clients may pass `mcpServers` during session creation or load. They can also use servers configured in Supercharge. Make sure the agent process can reach each server and that the client understands any required authentication; see [Extensions](/docs/extensions).
+
+Supercharge also advertises optional extension methods in `initialize`. Existing wire names use the `x.ai/` prefix for compatibility; changing that prefix would break clients. Categories include `x.ai/fs/*` (files), `x.ai/git/*` and `x.ai/git/worktree/*` (version control), `x.ai/search/*`, `x.ai/terminal/*`, `x.ai/auth/*`, and session-related methods. Notifications may include file-index changes or session-specific updates. These are **not** required for a basic ACP prompt. Discover methods and capabilities at runtime rather than treating examples as a fixed complete list.
+
+## Troubleshooting
+
+| Symptom | Check |
+| --- | --- |
+| No provider configured | Run `supercharge login` or `/setup` in the terminal UI, then start a new ACP session. |
+| Editor launches the terminal UI | Configure `supercharge agent stdio`, not bare `supercharge`; check the executable path with `supercharge --version`. |
+| No slash commands in the editor | Finish `session/new` first; the agent sends an `available_commands_update` for the session. |
+| Tool call waits forever | Handle permission requests, or opt into `--always-approve` for trusted automation. |
+| WebSocket client cannot connect | Check the bind address, `/ws` path, server secret, `server-key` query value, and server startup output. |
+| Client expects ACP but daemon serves HTTP | Use `agent serve` for ACP; use the inbox API only when the companion HTTP server is present. |
+| Server starts but cannot access a project | Check `cwd`, filesystem permissions, and that the agent process runs on the machine with the files. |
+
+For one-off automation, [CLI commands](/docs/commands) describes output formats and tool filters. For interactive use, see [Getting started](/docs/).

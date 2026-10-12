@@ -5,6 +5,7 @@
     "install",
     "setup",
     "commands",
+    "acp",
     "slash",
     "keys",
     "sessions",

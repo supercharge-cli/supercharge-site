@@ -143,7 +143,7 @@ function TechMarquee() {
 }
 
 const UNIX_INSTALL = 'curl -fsSL https://superchargeai.in/install.sh | bash';
-const WINDOWS_INSTALL = 'irm https://superchargeai.in/install.ps1 | iex';
+const WINDOWS_INSTALL = 'irm https://www.superchargeai.in/install.ps1 | iex';
 
 function InstallCommands() {
   const [os, setOs] = useState<'unix' | 'windows'>('unix');

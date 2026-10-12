@@ -1,77 +1,51 @@
 ---
-title: ACP and daemon
-description: Headless prompts, agent stdio, agent serve, and the inbox daemon
+title: Run modes
+description: Interactive UI, one-shot prompts, ACP transports, and the HTTP inbox
 ---
 
-# ACP and daemon
+# Run modes
 
-Three ways to run the same binary when you are not sitting in the terminal UI.
+Supercharge uses one CLI for interactive work, one-shot automation, and client integrations. Choose the entry point based on who controls the session.
 
-## One shot
+| Entry point | Protocol / output | Use it when |
+| --- | --- | --- |
+| `supercharge` | Interactive terminal UI | You are working in a terminal. |
+| `supercharge -p "Task"` | One answer, then exit | A script or CI job needs a bounded prompt. |
+| `supercharge agent stdio` | ACP JSON-RPC on stdin/stdout | An editor or SDK starts the local agent. |
+| `supercharge agent serve` | ACP JSON-RPC over WebSocket | A client connects to your running agent. |
+| `supercharge agent headless` | Outbound WebSocket relay | An agent connects to a relay you configured. |
+| `supercharge agent daemon` | HTTP inbox, with ACP WebSocket fallback | An HTTP chat client talks to a separately started agent service. |
+
+## One-shot automation
 
 ```bash
-supercharge -p "Add a health check and run the unit tests" --yolo
+supercharge -p "Add a health check and run the tests" --output-format plain
 supercharge -p "Explain src/lib.rs" --output-format json
 ```
 
-The process exits when the reply is done. Stdout is the answer. See [CLI commands](/docs/commands) for formats and tool filters.
+Use `--output-format streaming-json` for line-delimited session updates, or `streaming-messages-json` for message-format streaming. `--max-turns`, `--tools`, and `--disallowed-tools` apply to headless one-shot runs, not the interactive terminal UI. For approval-free trusted automation, use `--yolo`; deny rules and hooks still apply. See [CLI commands](/docs/commands) and [Permissions](/docs/permissions).
 
-## ACP over stdio
+## Client integrations
 
-Editors and SDKs speak Agent Client Protocol on stdin and stdout:
-
-```bash
-supercharge agent --always-approve stdio
-supercharge agent --always-approve --model your-model-id stdio
-```
-
-Flags that apply to every agent transport go after `agent` and before the mode name.
-
-| Flag | Meaning |
-| --- | --- |
-| `-m`, `--model` | Model id. |
-| `--always-approve`, `--yolo` | No interactive permission prompts. |
-| `--agent-profile <PATH>` | Profile file. |
-| `--leader` / `--no-leader` | Share a leader process, or force a local agent. |
-
-## ACP WebSocket
+For a local editor:
 
 ```bash
-supercharge agent serve
-supercharge agent --always-approve serve --bind 127.0.0.1:2419 --secret TOKEN
+supercharge agent stdio
+supercharge acp setup --editor zed
 ```
 
-Default bind is `127.0.0.1:2419`. The secret is `--secret` or `SUPERCHARGE_AGENT_SECRET`.
-
-Clients connect to:
-
-```text
-ws://127.0.0.1:2419/ws?server-key=TOKEN
-```
-
-A remote CLI:
+For an ACP WebSocket client:
 
 ```bash
-supercharge --remote ws://127.0.0.1:2419/ws --secret TOKEN
+supercharge agent --always-approve serve --bind 127.0.0.1:2419 --secret YOUR_TOKEN
 ```
 
-Session state survives a reconnect. This mode is not the HTTP inbox.
+The agent's shared flags go before `stdio` or `serve`; `--bind` and `--secret` go after `serve`. The server's default bind is `127.0.0.1:2419`. See [Agent Client Protocol (ACP)](/docs/acp) for editor setup, connection URLs, session messages, authentication, permissions, live model selection, and extensions.
 
-## Inbox daemon
-
-Clients never launch the CLI. They send HTTP and read server-sent events. The daemon, on the machine that has the files, starts the agent.
+## HTTP inbox
 
 ```bash
-supercharge agent daemon --bind 0.0.0.0:6767 --secret TOKEN
+supercharge agent --always-approve daemon --bind 127.0.0.1:8790 --secret YOUR_TOKEN
 ```
 
-| Input | Source |
-| --- | --- |
-| Bind | `--bind` or `SUPERAGENT_BIND`. App and Docker hosts use `0.0.0.0:6767`. |
-| Secret | `--secret`, else `SUPERCHARGE_PASSWORD`, else `SUPERAGENT_API_TOKEN`. |
-
-If `supercharge-superagent-server` is on `PATH`, the daemon runs that process and you get the full `/v1/chat` inbox (events, stop, approve, conversations). If that binary is missing, the daemon falls back to ACP WebSocket `agent serve`.
-
-`--leader-socket` isolates a local leader. Sockets under `~/.supercharge/leader-*.sock` stay visible to `supercharge leader list` and `supercharge leader kill` when those subcommands are in your build.
-
-Always-approve is the mode for an unattended daemon. Deny rules still apply.
+The daemon defaults to `0.0.0.0:8790` if you omit `--bind`. When its companion HTTP server is installed, it provides the `/v1/chat` inbox. Otherwise the CLI announces a fallback to ACP WebSocket on the same bind address. Check the startup message and connect with the corresponding protocol. This mode is distinct from `agent serve` and from `-p`.

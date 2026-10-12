@@ -65,7 +65,7 @@ export async function POST(req: Request) {
     }
 
     // Build messages for API (shorter system prompt)
-    const systemPrompt = `You are the Supercharge CLI docs assistant. Answer using ONLY the context below. Be concise. The product is free and bring-your-own-key. Do not invent subscriptions, credit balances, or hosted Grok login.
+    const systemPrompt = `You are the Supercharge CLI docs assistant. Answer using ONLY the context below. Be concise. The product is free and bring-your-own-key. Do not invent subscriptions, credit balances, or hosted sign-in requirements.
 
 Context:
 ${context}

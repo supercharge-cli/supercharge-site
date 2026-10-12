@@ -2,8 +2,8 @@
 # Supercharge AI public installer for Windows PowerShell
 #
 # Usage:
-#   irm https://superchargeai.in/install.ps1 | iex
-#   & ([scriptblock]::Create((irm https://superchargeai.in/install.ps1))) -Version 1.0.5
+#   irm https://www.superchargeai.in/install.ps1 | iex
+#   & ([scriptblock]::Create((irm https://www.superchargeai.in/install.ps1))) -Version 1.0.5
 #   $env:SUPERCHARGE_VERSION="1.0.5"; irm ... | iex
 #
 
