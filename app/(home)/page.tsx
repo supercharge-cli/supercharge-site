@@ -142,7 +142,7 @@ function TechMarquee() {
   );
 }
 
-const UNIX_INSTALL = 'curl -fsSL https://superchargeai.in/install.sh | bash';
+const UNIX_INSTALL = 'curl -fsSL https://www.superchargeai.in/install.sh | bash';
 const WINDOWS_INSTALL = 'irm https://www.superchargeai.in/install.ps1 | iex';
 
 function InstallCommands() {
