@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: 'Download Supercharge Studio for desktop and Android. Connect a phone to your desktop agent and continue your chats.',
 };
 
-const latest = 'https://github.com/iotserver24/supercharge-studio/releases/latest/download';
+const latest = 'https://github.com/supercharge-cli/supercharge-studio/releases/latest/download';
 
 const desktopDownloads = [
   { name: 'Linux AppImage', file: 'Supercharge-Studio_0.1.4_amd64.AppImage', note: 'Portable, x86_64' },
@@ -47,7 +47,8 @@ export default function DownloadPage() {
               </a>
             ))}
           </div>
-          <a href="https://github.com/iotserver24/supercharge-studio/releases/latest" className="mt-4 inline-flex items-center gap-2 text-sm text-zinc-400 underline decoration-zinc-700 underline-offset-4 hover:text-white">
+          <a href="https://github.com/i
+supercharge-cli/supercharge-studio/releases/latest" className="mt-4 inline-flex items-center gap-2 text-sm text-zinc-400 underline decoration-zinc-700 underline-offset-4 hover:text-white">
             All release files and checksums <ArrowRight className="h-4 w-4" />
           </a>
         </section>
