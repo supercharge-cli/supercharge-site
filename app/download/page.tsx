@@ -47,8 +47,7 @@ export default function DownloadPage() {
               </a>
             ))}
           </div>
-          <a href="https://github.com/i
-supercharge-cli/supercharge-studio/releases/latest" className="mt-4 inline-flex items-center gap-2 text-sm text-zinc-400 underline decoration-zinc-700 underline-offset-4 hover:text-white">
+          <a href="https://github.com/supercharge-cli/supercharge-studio/releases/latest" className="mt-4 inline-flex items-center gap-2 text-sm text-zinc-400 underline decoration-zinc-700 underline-offset-4 hover:text-white">
             All release files and checksums <ArrowRight className="h-4 w-4" />
           </a>
         </section>
