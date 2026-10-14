@@ -1,8 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowRight, Bot, Zap, Download, Terminal, Cpu, Globe, Sparkles, Rocket, Shield, Clock } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { ArrowRight, Bot, Zap, Download, Terminal, Cpu, Globe, Sparkles, Rocket, Shield, Clock, Smartphone } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import { androidUniversal, desktopDownloads, serverDownloads, studioLatestDownload, studioRelease } from '@/lib/studio-downloads';
 
 // Animated background orbs component - NO random values to avoid hydration mismatch
 function FloatingOrbs() {
@@ -59,53 +60,32 @@ function useTypewriter(text: string, speed: number = 100) {
 }
 
 // Intersection observer hook for scroll animations
-function useScrollAnimation() {
-  const ref = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
+const scrollObservers = new WeakMap<object, IntersectionObserver>();
 
-  useEffect(() => {
+function Reveal({ className, children }: { className: string; children: ReactNode }) {
+  const [isVisible, setIsVisible] = useState(false);
+  const [key] = useState(() => ({}));
+  const setNode = useCallback((node: HTMLDivElement | null) => {
+    scrollObservers.get(key)?.disconnect();
+    if (!node) {
+      scrollObservers.delete(key);
+      return;
+    }
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
+        if (entry.isIntersecting) setIsVisible(true);
       },
       { threshold: 0.1, rootMargin: '50px' }
     );
+    observer.observe(node);
+    scrollObservers.set(key, observer);
+  }, [key]);
 
-    if (ref.current) {
-      observer.observe(ref.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
-  return { ref, isVisible };
-}
-
-// Animated counter for stats
-function AnimatedCounter({ end, duration = 2000, suffix = '' }: { end: number; duration?: number; suffix?: string }) {
-  const [count, setCount] = useState(0);
-  const { ref, isVisible } = useScrollAnimation();
-
-  useEffect(() => {
-    if (!isVisible) return;
-
-    let startTime: number;
-    const animate = (timestamp: number) => {
-      if (!startTime) startTime = timestamp;
-      const progress = Math.min((timestamp - startTime) / duration, 1);
-      setCount(Math.floor(progress * end));
-
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      }
-    };
-
-    requestAnimationFrame(animate);
-  }, [isVisible, end, duration]);
-
-  return <span ref={ref}>{count}{suffix}</span>;
+  return (
+    <div ref={setNode} className={`${className} transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+      {children}
+    </div>
+  );
 }
 
 // Marquee component for tech stack
@@ -151,10 +131,13 @@ function InstallCommands() {
   const [copied, setCopied] = useState<'unix' | 'windows' | null>(null);
 
   useEffect(() => {
-    const ua = navigator.userAgent || '';
-    const platform = navigator.platform || '';
-    setOs(/Win/i.test(platform) || /Windows/i.test(ua) ? 'windows' : 'unix');
-    setReady(true);
+    const frame = requestAnimationFrame(() => {
+      const ua = navigator.userAgent || '';
+      const platform = navigator.platform || '';
+      setOs(/Win/i.test(platform) || /Windows/i.test(ua) ? 'windows' : 'unix');
+      setReady(true);
+    });
+    return () => cancelAnimationFrame(frame);
   }, []);
 
   async function copy(kind: 'unix' | 'windows') {
@@ -246,9 +229,6 @@ export default function HomePage() {
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
-
-  const featuresSection = useScrollAnimation();
-  const updatesSection = useScrollAnimation();
 
   return (
     <div className="flex flex-col items-center justify-center w-full overflow-hidden bg-black text-zinc-100">
@@ -437,13 +417,71 @@ export default function HomePage() {
         />
       </div>
 
+      <section className="relative z-10 w-full border-t border-zinc-900 px-6 py-20 lg:px-10" aria-labelledby="studio-downloads">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-10 text-center">
+            <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-orange-500/20 bg-orange-500/10 px-3 py-1 text-sm font-medium text-orange-400">
+              <Download className="h-4 w-4" />
+              Supercharge Studio · {studioRelease}
+            </span>
+            <h2 id="studio-downloads" className="mb-4 text-3xl font-bold text-white md:text-5xl">
+              Download Studio
+            </h2>
+            <p className="mx-auto max-w-xl text-zinc-400">
+              Studio is an app that runs on the CLI, so the CLI has to be installed for it to run. The mobile app connects to the PC app.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {desktopDownloads.map((download) => (
+              <a
+                key={download.file}
+                href={`${studioLatestDownload}/${download.file}`}
+                className="group flex min-h-24 items-center justify-between gap-4 rounded-2xl border border-zinc-800 bg-zinc-950/80 px-5 py-4 transition hover:border-orange-500/50"
+              >
+                <span className="text-left">
+                  <span className="block font-medium text-zinc-100">{download.name}</span>
+                  <span className="mt-1 block text-sm text-zinc-500">{download.note}</span>
+                </span>
+                <Download className="h-5 w-5 shrink-0 text-orange-400 transition group-hover:translate-y-0.5" />
+              </a>
+            ))}
+          </div>
+          <a
+            href={`${studioLatestDownload}/${androidUniversal.file}`}
+            className="mt-3 flex min-h-24 items-center justify-between gap-4 rounded-2xl border border-zinc-800 bg-zinc-950/80 px-5 py-4 transition hover:border-orange-500/50"
+          >
+            <span className="flex items-center gap-3 text-left">
+              <Smartphone className="h-5 w-5 shrink-0 text-orange-400" />
+              <span>
+                <span className="block font-medium text-zinc-100">{androidUniversal.name}</span>
+                <span className="mt-1 block text-sm text-zinc-500">{androidUniversal.note}</span>
+              </span>
+            </span>
+            <Download className="h-5 w-5 shrink-0 text-orange-400" />
+          </a>
+          <h3 className="mb-3 mt-10 text-left text-xl font-semibold text-white">Server</h3>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {serverDownloads.map((download) => (
+              <a
+                key={download.file}
+                href={`${studioLatestDownload}/${download.file}`}
+                className="group flex min-h-24 items-center justify-between gap-4 rounded-2xl border border-zinc-800 bg-zinc-950/80 px-5 py-4 transition hover:border-orange-500/50"
+              >
+                <span className="text-left">
+                  <span className="block font-medium text-zinc-100">{download.name}</span>
+                  <span className="mt-1 block text-sm text-zinc-500">{download.note}</span>
+                </span>
+                <Download className="h-5 w-5 shrink-0 text-orange-400 transition group-hover:translate-y-0.5" />
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* 2. Features Grid */}
-      <div
-        ref={featuresSection.ref}
-        className="w-full px-6 py-20 border-t border-zinc-900 lg:px-10"
-      >
+      <Reveal className="w-full px-6 py-20 border-t border-zinc-900 lg:px-10">
         {/* Section header */}
-        <div className={`text-center mb-16 transition-all duration-700 ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <div className="text-center mb-16">
           <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-sm font-medium mb-4">
             <Sparkles className="w-4 h-4" />
             Features
@@ -469,13 +507,10 @@ export default function HomePage() {
             </Link>
           ))}
         </div>
-      </div>
+      </Reveal>
 
       {/* 4. Updates Section */}
-      <div
-        ref={updatesSection.ref}
-        className={`w-full px-6 py-12 border-t border-zinc-900 transition-all duration-700 lg:px-10 ${updatesSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-      >
+      <Reveal className="w-full px-6 py-12 border-t border-zinc-900 lg:px-10">
         <div className="group flex flex-col md:flex-row items-center justify-between gap-6 p-8 rounded-2xl bg-zinc-900/30 border border-zinc-800 hover:border-orange-500/30 transition-all duration-300 backdrop-blur-sm">
           <div className="text-center md:text-left">
             <h3 className="text-xl font-semibold text-zinc-100 mb-2">
@@ -491,7 +526,7 @@ export default function HomePage() {
             <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
           </Link>
         </div>
-      </div>
+      </Reveal>
 
       {/* 5. Tech Stack Marquee */}
       <div className="w-full border-t border-zinc-900 bg-zinc-950/50 py-8">

@@ -1,22 +1,19 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowDownToLine, ArrowRight, Smartphone, Monitor, ShieldCheck } from 'lucide-react';
+import { ArrowDownToLine, ArrowRight, Smartphone, Monitor, ShieldCheck, Server } from 'lucide-react';
+import {
+  androidUniversal,
+  desktopDownloads,
+  serverDownloads,
+  studioLatestDownload,
+  studioRelease,
+  studioReleasePage,
+} from '@/lib/studio-downloads';
 
 export const metadata: Metadata = {
   title: 'Download Supercharge Studio',
-  description: 'Download Supercharge Studio for desktop and Android. Connect a phone to your desktop agent and continue your chats.',
+  description: 'Studio is an app that runs on the CLI, so the CLI has to be installed for it to run. The mobile app connects to the PC app.',
 };
-
-const latest = 'https://github.com/supercharge-cli/supercharge-studio/releases/latest/download';
-
-const desktopDownloads = [
-  { name: 'Linux AppImage', file: 'Supercharge-Studio_0.1.4_amd64.AppImage', note: 'Portable, x86_64' },
-  { name: 'Debian / Ubuntu', file: 'Supercharge-Studio_0.1.4_amd64.deb', note: '64-bit package' },
-  { name: 'Fedora / RPM', file: 'Supercharge-Studio-0.1.4-1.x86_64.rpm', note: '64-bit package' },
-  { name: 'macOS', file: 'Supercharge-Studio_0.1.4_universal.dmg', note: 'Universal build' },
-  { name: 'Windows installer', file: 'Supercharge-Studio_0.1.4_x64-setup.exe', note: '64-bit setup' },
-  { name: 'Windows MSI', file: 'Supercharge-Studio_0.1.4_x64_en-US.msi', note: '64-bit installer' },
-];
 
 export default function DownloadPage() {
   return (
@@ -24,10 +21,10 @@ export default function DownloadPage() {
       <div className="mx-auto max-w-5xl">
         <Link href="/" className="text-sm text-zinc-400 transition hover:text-white">← Supercharge home</Link>
         <header className="mt-12 max-w-3xl">
-          <p className="font-mono text-sm text-orange-400">SUPERCHARGE STUDIO · v0.1.4</p>
+          <p className="font-mono text-sm text-orange-400">SUPERCHARGE STUDIO · {studioRelease}</p>
           <h1 className="mt-4 text-4xl font-semibold tracking-tight sm:text-6xl">Your coding agent, at your desk and in your pocket.</h1>
           <p className="mt-5 max-w-2xl text-base leading-7 text-zinc-400 sm:text-lg">
-            Studio is the chat app for Supercharge AI. Run the desktop app to work with your local agent, then pair your phone to continue chats from mobile.
+            Studio is an app that runs on the CLI, so the CLI has to be installed for it to run. The mobile app connects to the PC app.
           </p>
         </header>
 
@@ -38,7 +35,7 @@ export default function DownloadPage() {
           </div>
           <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {desktopDownloads.map((download) => (
-              <a key={download.file} href={`${latest}/${download.file}`} className="group flex min-h-24 items-center justify-between gap-4 rounded-xl border border-zinc-800 bg-zinc-950 px-5 py-4 transition hover:border-orange-500/60 hover:bg-zinc-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-orange-400">
+              <a key={download.file} href={`${studioLatestDownload}/${download.file}`} className="group flex min-h-24 items-center justify-between gap-4 rounded-xl border border-zinc-800 bg-zinc-950 px-5 py-4 transition hover:border-orange-500/60 hover:bg-zinc-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-orange-400">
                 <span>
                   <span className="block font-medium text-zinc-100">{download.name}</span>
                   <span className="mt-1 block text-sm text-zinc-500">{download.note}</span>
@@ -47,9 +44,27 @@ export default function DownloadPage() {
               </a>
             ))}
           </div>
-          <a href="https://github.com/supercharge-cli/supercharge-studio/releases/latest" className="mt-4 inline-flex items-center gap-2 text-sm text-zinc-400 underline decoration-zinc-700 underline-offset-4 hover:text-white">
+          <a href={studioReleasePage} className="mt-4 inline-flex items-center gap-2 text-sm text-zinc-400 underline decoration-zinc-700 underline-offset-4 hover:text-white">
             All release files and checksums <ArrowRight className="h-4 w-4" />
           </a>
+        </section>
+
+        <section className="mt-14 border-t border-zinc-800 pt-8" aria-labelledby="server-downloads">
+          <div className="flex items-center gap-3">
+            <Server className="h-5 w-5 text-orange-400" />
+            <h2 id="server-downloads" className="text-2xl font-semibold">Server</h2>
+          </div>
+          <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {serverDownloads.map((download) => (
+              <a key={download.file} href={`${studioLatestDownload}/${download.file}`} className="group flex min-h-24 items-center justify-between gap-4 rounded-xl border border-zinc-800 bg-zinc-950 px-5 py-4 transition hover:border-orange-500/60 hover:bg-zinc-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-orange-400">
+                <span>
+                  <span className="block font-medium text-zinc-100">{download.name}</span>
+                  <span className="mt-1 block text-sm text-zinc-500">{download.note}</span>
+                </span>
+                <ArrowDownToLine className="h-5 w-5 shrink-0 text-orange-400 transition group-hover:translate-y-0.5" />
+              </a>
+            ))}
+          </div>
         </section>
 
         <section className="mt-14 grid gap-10 border-t border-zinc-800 pt-8 md:grid-cols-[1fr_1.2fr]">
@@ -58,8 +73,8 @@ export default function DownloadPage() {
               <Smartphone className="h-5 w-5 text-orange-400" />
               <h2 className="text-2xl font-semibold">Android phone</h2>
             </div>
-            <p className="mt-4 leading-7 text-zinc-400">Download the universal Android build for supported phone architectures.</p>
-            <a href={`${latest}/supercharge-studio-android-universal-unsigned.apk`} className="mt-5 inline-flex items-center gap-2 rounded-lg bg-orange-500 px-5 py-3 font-semibold text-black transition hover:bg-orange-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-300">
+            <p className="mt-4 leading-7 text-zinc-400">The mobile app connects to the PC app. Download the universal Android build.</p>
+            <a href={`${studioLatestDownload}/${androidUniversal.file}`} className="mt-5 inline-flex items-center gap-2 rounded-lg bg-orange-500 px-5 py-3 font-semibold text-black transition hover:bg-orange-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-300">
               <ArrowDownToLine className="h-5 w-5" /> Universal Android APK
             </a>
             <p className="mt-3 text-sm leading-6 text-amber-200/80">This release APK is unsigned. Android requires a signed APK to install, so this file is for signing/development—not a one-tap install.</p>
