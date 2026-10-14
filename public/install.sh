@@ -13,7 +13,7 @@
 set -euo pipefail
 
 TARGET="${1:-${SUPERCHARGE_VERSION:-}}"
-REPO="${SUPERCHARGE_GITHUB_REPO:-iotserver24/supercharge-releases}"
+REPO="${SUPERCHARGE_GITHUB_REPO:-supercharge-cli/supercharge-releases}"
 BIN_DIR="${SUPERCHARGE_BIN_DIR:-$HOME/.local/bin}"
 CONFIG_HOME="${SUPERCHARGE_HOME:-$HOME/.supercharge}"
 DOWNLOAD_DIR="${SUPERCHARGE_DOWNLOAD_DIR:-$CONFIG_HOME/downloads}"
