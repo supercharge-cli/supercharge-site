@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowRight, Bot, Zap, Github, Terminal, Cpu, Globe, Sparkles, Rocket, Shield, Clock } from 'lucide-react';
+import { ArrowRight, Bot, Zap, Download, Terminal, Cpu, Globe, Sparkles, Rocket, Shield, Clock } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 // Animated background orbs component - NO random values to avoid hydration mismatch
@@ -412,15 +412,13 @@ export default function HomePage() {
             <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-orange-600 opacity-0 group-hover:opacity-100 transition-opacity" />
             <div className="absolute inset-0 animate-shimmer" />
           </Link>
-          <a
-            href="https://github.com/iotserver24/supercharge-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href="/download"
             className="group flex items-center gap-2 px-10 py-4 bg-zinc-900/80 border border-zinc-700 hover:border-orange-500/50 hover:bg-zinc-800 text-zinc-300 rounded-full font-semibold transition-all duration-300 backdrop-blur-sm"
           >
-            <Github className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-            <span>App</span>
-          </a>
+            <Download className="w-5 h-5 transition-transform group-hover:translate-y-0.5" />
+            <span>Download Studio</span>
+          </Link>
           <Link
             href="/donate"
             className="px-8 py-3 rounded-full border border-zinc-700 text-zinc-300 font-semibold hover:border-orange-500/50 hover:text-white transition-colors"

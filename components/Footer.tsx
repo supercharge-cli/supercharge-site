@@ -6,7 +6,8 @@ const columns = [
     title: 'Start',
     links: [
       { href: '/docs', label: 'Getting started' },
-      { href: '/docs/install', label: 'Install' },
+      { href: '/docs/install', label: 'Install CLI' },
+      { href: '/download', label: 'Download Studio' },
       { href: '/docs/setup', label: 'Provider setup' },
       { href: '/docs/commands', label: 'CLI commands' },
       { href: '/donate', label: 'Donate' },
