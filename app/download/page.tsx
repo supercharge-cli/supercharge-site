@@ -77,7 +77,7 @@ export default function DownloadPage() {
             <a href={`${studioLatestDownload}/${androidUniversal.file}`} className="mt-5 inline-flex items-center gap-2 rounded-lg bg-orange-500 px-5 py-3 font-semibold text-black transition hover:bg-orange-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-300">
               <ArrowDownToLine className="h-5 w-5" /> Universal Android APK
             </a>
-            <p className="mt-3 text-sm leading-6 text-amber-200/80">This release APK is unsigned. Android requires a signed APK to install, so this file is for signing/development—not a one-tap install.</p>
+            <p className="mt-3 text-sm leading-6 text-zinc-400">Signed release APK. Allow installs from your browser when Android asks.</p>
           </div>
           <div>
             <h2 className="text-2xl font-semibold">Connect your phone to your computer</h2>
