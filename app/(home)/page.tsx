@@ -431,6 +431,18 @@ export default function HomePage() {
               Studio is an app that runs on the CLI, so the CLI has to be installed for it to run. The mobile app connects to the PC app.
             </p>
           </div>
+          <div className="mb-10 grid items-start gap-4">
+            <img
+              src="/studio-desktop.png"
+              alt="Supercharge Studio on the desktop, with a phone message in the chat and the browser panel open"
+              className="w-full rounded-2xl border border-zinc-800"
+            />
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <img src="/studio-phone-chat.png" alt="The same chat on the phone, connected to the computer" className="w-full rounded-2xl border border-zinc-800" />
+              <img src="/studio-phone-chats.png" alt="Phone chat history grouped by how recently each chat was used" className="w-full rounded-2xl border border-zinc-800" />
+              <img src="/studio-phone-projects.png" alt="Phone project list while connected on Wi-Fi" className="w-full rounded-2xl border border-zinc-800" />
+            </div>
+          </div>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {desktopDownloads.map((download) => (
               <a
