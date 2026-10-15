@@ -466,10 +466,30 @@ esac
 binary_path="${DOWNLOAD_DIR}/supercharge-${TARGET}-${platform}${ext}"
 binary_tmp="${binary_path}.tmp.$$"
 
-step 2 "Download" "${asset}"
-if ! download_file "${base_url}/${asset}" "$binary_tmp"; then
-  rm -f "$binary_tmp"
-  die "Download failed" "${base_url}/${asset}" "$DOWNLOAD_ERROR"
+# Prefer the smaller .xz asset when xz is available; fall back to the raw
+# binary when xz is missing, the release has no .xz asset (older releases),
+# or decompression fails.
+downloaded=0
+if command -v xz >/dev/null 2>&1 && [ "${SUPERCHARGE_NO_XZ:-0}" != 1 ]; then
+  step 2 "Download" "${asset}.xz"
+  if download_file "${base_url}/${asset}.xz" "${binary_tmp}.xz"; then
+    if xz -d -c "${binary_tmp}.xz" >"$binary_tmp" 2>/dev/null; then
+      downloaded=1
+    else
+      warn "Could not decompress ${asset}.xz; downloading the uncompressed binary."
+    fi
+  else
+    warn "${asset}.xz unavailable; downloading the uncompressed binary."
+  fi
+  rm -f "${binary_tmp}.xz"
+  [ "$downloaded" = 1 ] || rm -f "$binary_tmp"
+fi
+if [ "$downloaded" != 1 ]; then
+  step 2 "Download" "${asset}"
+  if ! download_file "${base_url}/${asset}" "$binary_tmp"; then
+    rm -f "$binary_tmp"
+    die "Download failed" "${base_url}/${asset}" "$DOWNLOAD_ERROR"
+  fi
 fi
 ok "saved"
 
