@@ -96,6 +96,22 @@ Selecting a custom agent keeps the coding tool loop (the same prompt mode as Age
 
 The displayed custom name is for this process. After you quit and resume, the session comes back as Agent, Plan, or Ask. Open Shift+Tab again to reselect the custom agent. The markdown file is still on disk.
 
+## Built-in Lean agent
+
+Supercharge ships one built-in alternate agent besides Plan and Ask: **Lean** (Leancharge), a Lean 4 coding agent with its own complete system prompt for theorem proving and Lean codebases.
+
+Start it at launch or switch mid-session:
+
+```bash
+supercharge --lean
+```
+
+```
+/lean
+```
+
+`/lean` switches the current chat to Lean; `--lean` starts the session there and applies to the whole process. Lean is not a custom agent file: `/agents` does not list it and it does not join the Shift+Tab ring. To go back to the standard agent, quit and start a new session without `--lean`.
+
 ## Studio
 
 Studio's chat menu sends the same fields to the CLI over ACP (`supercharge/agents/create` and `supercharge/agents/list`). The CLI writes the markdown. The next `session/set_mode` loads that file. Editing the file by hand and editing it in Studio are the same store.
