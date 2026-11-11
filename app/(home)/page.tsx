@@ -78,7 +78,7 @@ function InstallCommands() {
 
   const active = cards[0];
   return (
-    <div className="mt-6 flex w-full min-w-0 max-w-3xl flex-col gap-3 rounded-2xl border border-white/10 bg-white/[0.04] p-3 sm:mt-8 sm:flex-row sm:items-center sm:rounded-full sm:p-0 sm:py-2 sm:pl-4 sm:pr-2">
+    <div className="mt-6 flex w-full min-w-0 max-w-3xl flex-col gap-3 rounded-2xl border border-white/10 bg-white/[0.04] p-3 md:mt-8 md:flex-row md:items-center md:rounded-full md:p-0 md:py-2 md:pl-4 md:pr-2">
       <div className="flex min-w-0 flex-1 items-center gap-2">
         <button
           type="button"
@@ -88,14 +88,14 @@ function InstallCommands() {
         >
           {ready ? (os === 'windows' ? 'ps1' : 'bash') : '…'}
         </button>
-        <div className="min-w-0 flex-1 overflow-x-auto no-scrollbar">
-          <code className="block whitespace-nowrap font-mono text-sm text-orange-100">{active.command}</code>
+        <div className="min-w-0 flex-1 overflow-x-auto overscroll-x-contain no-scrollbar">
+          <code className="block w-max max-w-none whitespace-nowrap font-mono text-sm text-orange-100">{active.command}</code>
         </div>
       </div>
       <button
         type="button"
         onClick={() => copy(active.kind)}
-        className="inline-flex h-11 w-full shrink-0 items-center justify-center rounded-full bg-orange-500 px-4 text-sm font-semibold text-black sm:w-auto sm:px-3 sm:text-xs focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500"
+        className="inline-flex h-11 w-full shrink-0 items-center justify-center rounded-full bg-orange-500 px-4 text-sm font-semibold text-black md:w-auto md:px-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500"
       >
         {copied === active.kind ? 'Copied' : 'Copy'}
       </button>
@@ -171,25 +171,25 @@ function SessionPanel() {
     return () => clearInterval(timer);
   }, []);
   return (
-    <div className="min-w-0 overflow-hidden rounded-3xl border border-white/10 bg-zinc-950 shadow-[0_40px_120px_-48px_rgba(249,115,22,0.7)]">
-      <div className="flex items-center gap-2 border-b border-white/10 px-4 py-3">
-        <span className="h-2.5 w-2.5 rounded-full bg-zinc-700" />
-        <span className="h-2.5 w-2.5 rounded-full bg-zinc-700" />
-        <span className="h-2.5 w-2.5 rounded-full bg-orange-500" />
-        <span className="ml-2 font-mono text-xs text-zinc-500">supercharge</span>
+    <div className="w-full min-w-0 max-w-full overflow-hidden rounded-3xl border border-white/10 bg-zinc-950 shadow-[0_40px_120px_-48px_rgba(249,115,22,0.7)]">
+      <div className="flex min-w-0 items-center gap-2 border-b border-white/10 px-3 py-3 sm:px-4">
+        <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-zinc-700" />
+        <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-zinc-700" />
+        <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-orange-500" />
+        <span className="ml-2 truncate font-mono text-xs text-zinc-500">supercharge</span>
       </div>
-      <div className="space-y-4 px-4 py-5 font-mono text-xs sm:px-5 sm:py-6 sm:text-sm">
-        <p className="text-zinc-500">$ supercharge</p>
-        <p className="text-zinc-300">/setup <span className="text-zinc-500">· key stays on this machine</span></p>
-        <p>
+      <div className="min-w-0 space-y-3 px-3 py-4 font-mono text-xs sm:space-y-4 sm:px-5 sm:py-6 sm:text-sm">
+        <p className="break-words text-zinc-500">$ supercharge</p>
+        <p className="break-words text-zinc-300">/setup <span className="text-zinc-500">· key stays on this machine</span></p>
+        <p className="break-words">
           <span className="text-zinc-500">Switched to mode: </span>
           <span className="text-orange-300">{modes[index]}</span>
         </p>
-        <div className="flex flex-wrap gap-2 pt-2">
+        <div className="flex w-full min-w-0 flex-wrap gap-2 pt-1">
           {modes.map((mode, modeIndex) => (
             <span
               key={mode}
-              className={`rounded-full px-2.5 py-1 text-xs transition-colors duration-500 ${modeIndex === index ? 'bg-orange-500 text-black' : 'bg-white/5 text-zinc-400'}`}
+              className={`max-w-full shrink-0 rounded-full px-2.5 py-1.5 text-xs leading-tight transition-colors duration-500 ${modeIndex === index ? 'bg-orange-500 text-black' : 'bg-white/10 text-zinc-200'}`}
             >
               {mode}
             </span>
@@ -203,7 +203,7 @@ function SessionPanel() {
 export default function HomePage() {
   const { displayText, isComplete } = useTypewriter('runs on your machine.');
   return (
-    <div className="flex w-full min-w-0 flex-col overflow-x-clip bg-black text-zinc-100">
+    <div className="flex w-full min-w-0 max-w-full flex-col bg-black text-zinc-100">
       <style jsx global>{`
         @keyframes rise {
           from { opacity: 0; transform: translateY(18px); }
@@ -220,33 +220,39 @@ export default function HomePage() {
         .drift { animation: drift 14s ease-in-out infinite; }
         .caret { animation: caret 1s steps(1) infinite; }
       `}</style>
-      <header className="relative w-full min-w-0 overflow-hidden px-4 pb-10 pt-10 md:px-10 md:pb-16 md:pt-14 lg:px-16 lg:pb-24 lg:pt-20">
-        <div className="pointer-events-none absolute left-[-8%] top-[-10%] h-[28rem] w-[28rem] max-w-none rounded-full bg-orange-600/20 blur-3xl drift" />
-        <div className="relative grid min-w-0 items-center gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:gap-12">
-          <div className="min-w-0">
+      <header className="relative w-full min-w-0 max-w-full px-4 pb-10 pt-10 md:px-10 md:pb-16 md:pt-14 lg:px-16 lg:pb-24 lg:pt-20">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+          <div className="absolute left-[-8%] top-[-10%] h-[28rem] w-[28rem] rounded-full bg-orange-600/20 blur-3xl drift" />
+        </div>
+        <div className="relative grid min-w-0 max-w-full items-center gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-12">
+          <div className="min-w-0 max-w-full">
             <p className="rise font-mono text-xs uppercase tracking-[0.22em] text-orange-400">CLI 1.4.5 · no subscription</p>
-            <h1 className="rise mt-4 text-[2rem] font-semibold leading-[1.05] tracking-tight text-white sm:mt-5 sm:text-5xl sm:leading-[1] md:text-8xl md:leading-[0.95]" style={{ animationDelay: '0.08s' }}>
+            <h1 className="rise mt-4 text-balance break-words text-3xl font-semibold leading-snug tracking-tight text-white sm:mt-5 sm:text-5xl sm:leading-tight md:text-7xl lg:text-8xl md:leading-[1.05]" style={{ animationDelay: '0.08s' }}>
               A coding agent that
-              <span className="mt-2 block text-orange-500">
+              <span className="mt-2 block break-words text-orange-500">
                 {displayText}
                 {!isComplete && <span className="caret">|</span>}
               </span>
             </h1>
-            <p className="rise mt-4 max-w-xl text-base leading-7 text-zinc-400 sm:mt-6 sm:text-lg sm:leading-8" style={{ animationDelay: '0.16s' }}>
+            <p className="rise mt-4 max-w-xl text-pretty break-words text-base leading-7 text-zinc-300 sm:mt-6 sm:text-lg sm:leading-8 sm:text-zinc-400" style={{ animationDelay: '0.16s' }}>
               It reads the repo, edits files, and runs commands. The model key stays in <span className="font-mono text-zinc-200">/setup</span>.
             </p>
-            <div className="rise" style={{ animationDelay: '0.22s' }}>
+            <div className="rise min-w-0 max-w-full" style={{ animationDelay: '0.22s' }}>
               <InstallCommands />
             </div>
-            <div className="rise mt-4 flex flex-col gap-1 sm:mt-5 sm:flex-row sm:flex-wrap sm:items-center sm:gap-5" style={{ animationDelay: '0.3s' }}>
-              <Link href="/docs" className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-white">
+            <div className="rise mt-4 flex w-full min-w-0 flex-col gap-2 sm:mt-6 sm:flex-row sm:flex-wrap sm:items-center" style={{ animationDelay: '0.3s' }}>
+              <Link href="/docs" className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-orange-500 px-5 text-sm font-semibold text-black sm:w-auto">
                 Read the docs <ArrowRight className="h-4 w-4" />
               </Link>
-              <a href="#studio-downloads" className="inline-flex min-h-11 items-center text-sm text-zinc-400 hover:text-white">Studio</a>
-              <Link href="/donate" className="inline-flex min-h-11 items-center text-sm text-zinc-400 hover:text-white">Donate</Link>
+              <a href="#studio-downloads" className="inline-flex min-h-12 w-full items-center justify-center rounded-full border border-white/20 bg-white/[0.04] px-5 text-sm font-medium text-zinc-100 sm:w-auto">
+                Studio
+              </a>
+              <Link href="/donate" className="inline-flex min-h-12 w-full items-center justify-center rounded-full border border-white/20 bg-white/[0.04] px-5 text-sm font-medium text-zinc-100 sm:w-auto">
+                Donate
+              </Link>
             </div>
           </div>
-          <div className="rise min-w-0" style={{ animationDelay: '0.2s' }}>
+          <div className="rise min-w-0 max-w-full" style={{ animationDelay: '0.2s' }}>
             <SessionPanel />
           </div>
         </div>
@@ -265,28 +271,30 @@ export default function HomePage() {
       <section className="border-t border-white/10 px-4 py-8 md:px-10 md:py-10 lg:px-16" aria-labelledby="startup-programs">
         <div className="flex min-w-0 flex-col items-start gap-4 md:flex-row md:items-center md:justify-between md:gap-6">
           <h2 id="startup-programs" className="font-mono text-xs uppercase tracking-[0.18em] text-zinc-500">Startup programs</h2>
-          <div className="grid w-full min-w-0 grid-cols-1 gap-2 min-[420px]:grid-cols-2 lg:flex lg:flex-wrap lg:items-center lg:gap-4">
+          <div className="grid w-full min-w-0 grid-cols-2 gap-2 lg:flex lg:flex-wrap lg:items-center lg:gap-4">
             {startupPrograms.map((item) => (
               <a
                 key={item.name}
                 href={item.href}
                 rel="noopener noreferrer"
                 aria-label={`${item.name} ${item.note}`}
-                className="inline-flex min-h-11 min-w-0 items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2.5 transition hover:border-white/25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 lg:w-auto lg:gap-3 lg:px-6 lg:py-3"
+                className="flex min-h-12 min-w-0 items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.06] px-3 py-2 transition hover:border-white/25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 lg:w-auto lg:rounded-full lg:gap-3 lg:px-6 lg:py-3"
               >
                 <img
                   src={item.logo}
                   alt=""
-                  className={item.wordmark ? 'h-6 w-auto max-w-[7.5rem] shrink-0 lg:h-7' : 'h-6 w-6 shrink-0 lg:h-7 lg:w-7'}
+                  className={item.wordmark ? 'h-5 w-auto max-w-[4.5rem] shrink-0 sm:max-w-[7rem] lg:h-7 lg:max-w-[7.5rem]' : 'h-5 w-5 shrink-0 lg:h-7 lg:w-7'}
                 />
-                {!item.wordmark && <span className="truncate text-base font-medium text-zinc-100 lg:text-lg">{item.name}</span>}
-                <span className="truncate text-xs text-zinc-500 lg:text-sm">{item.note}</span>
+                <span className="min-w-0">
+                  {!item.wordmark && <span className="block truncate text-sm font-medium text-zinc-50 lg:text-lg">{item.name}</span>}
+                  <span className="block truncate text-xs text-zinc-300 lg:text-sm">{item.note}</span>
+                </span>
               </a>
             ))}
             <a
               href="https://e2b.dev/startups"
               rel="noopener noreferrer"
-              className="inline-flex min-h-11 items-center justify-start rounded-sm min-[420px]:col-span-2 lg:col-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500"
+              className="col-span-2 inline-flex min-h-11 items-center justify-start rounded-sm lg:col-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500"
             >
               <img
                 src="/e2b/startup_badge-nameplate-outline-white.svg"
