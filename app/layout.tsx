@@ -1,17 +1,23 @@
+import { SITE_URL, SITE_DESCRIPTION } from '@/lib/seo';
 import type { Metadata, Viewport } from 'next';
 import { RootProvider } from 'fumadocs-ui/provider/next';
 import './global.css';
 import './editorial.css';
 import './studio-hero.css';
 import './dark-theme.css';
+import './landing-polish.css';
+import './dot-art.css';
+import './landing-motion.css';
 import { Inter } from 'next/font/google';
 
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://superchargeai.in'),
-  title: 'Supercharge — Your code. Your models. Your workspace.',
-  description:
-    'An AI coding agent for your terminal and desktop. Bring your own model, work with your local repo, and make Supercharge your own.',
+  metadataBase: new URL(SITE_URL),
+  title: { default: 'Supercharge — AI Coding Agent for CLI & Studio', template: '%s | Supercharge' },
+  description: SITE_DESCRIPTION,
+  applicationName: 'Supercharge',
+  icons: { icon: '/logo.png', apple: '/logo.png' },
+  robots: { index: true, follow: true, googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1, 'max-video-preview': -1 } },
 };
 
 export const viewport: Viewport = {
