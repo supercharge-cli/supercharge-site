@@ -29,5 +29,6 @@ export const startupPrograms: {
   { name: 'MongoDB', logo: '/badges/mongodb.png', note: 'Startup program', href: 'https://www.mongodb.com/startups', wordmark: true },
   { name: 'Composio', logo: '/badges/composio.svg', note: 'Startup program', href: 'https://composio.dev/startups', wordmark: true },
   { name: 'Exa', logo: '/badges/exa.svg', note: 'Startup program', href: 'https://exa.ai/', wordmark: true },
+  { name: 'Linkup', logo: '/badges/linkup.svg', note: 'Startup program', href: 'https://www.linkup.so/startups', wordmark: true },
 ];
 
