@@ -31,9 +31,7 @@ export const startupPrograms: {
   { name: 'Exa', logo: '/badges/exa.svg', note: 'Startup program', href: 'https://exa.ai/', wordmark: true },
   { name: 'Linkup', logo: '/badges/linkup.svg', note: 'Web Search API for AI', href: 'https://www.linkup.so/startups', wordmark: true },
   { name: 'Descope', logo: '/badges/descope.svg', note: 'Startup plan', href: 'https://www.descope.com/for-startups' },
-  { name: 'Neo4j', logo: '/badges/neo4j.svg', note: 'Startup program', href: 'https://neo4j.com/startup-program/', wordmark: true },
   { name: 'Civo', logo: '/badges/civo.svg', note: 'Startup program', href: 'https://www.civo.com/startup-program', wordmark: true },
   { name: 'Zilliz', logo: '/badges/zilliz.svg', note: 'Startup program', href: 'https://zilliz.com/zilliz-for-startups', wordmark: true },
-  { name: 'AMD', logo: '/badges/amd.svg', note: 'AI Developer Program', href: 'https://developer.amd.com/ai-developer-program/', wordmark: true },
 ];
 
