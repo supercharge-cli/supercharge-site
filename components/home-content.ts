@@ -34,5 +34,6 @@ export const startupPrograms: {
   { name: 'Neo4j', logo: '/badges/neo4j.svg', note: 'Startup program', href: 'https://neo4j.com/startup-program/', wordmark: true },
   { name: 'Civo', logo: '/badges/civo.svg', note: 'Startup program', href: 'https://www.civo.com/startup-program', wordmark: true },
   { name: 'Zilliz', logo: '/badges/zilliz.svg', note: 'Startup program', href: 'https://zilliz.com/zilliz-for-startups', wordmark: true },
+  { name: 'Sarvam', logo: '/badges/sarvam.svg', note: 'Startup program', href: 'https://www.sarvam.ai', wordmark: true },
 ];
 
